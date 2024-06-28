@@ -268,10 +268,65 @@ int mainMenu(int *width, int *height) {
     menuTextures[3] = LoadTexture("assets/quit.png",renderTarget);
     sizes[3] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + 2*sizes[1].h + 50,(*width)/4,(*height)/6,menuTextures[3]);
 
+    // STARS ANIMATION
+    menuTextures[4] = LoadTexture("testing.png",renderTarget);
+    int textureWidth, textureHeight;
+    SDL_QueryTexture(menuTextures[4],NULL,NULL,&textureWidth,&textureHeight);
+    SDL_Rect position;
+    SDL_Rect staticpoz;
+    int initial = *width;
+    staticpoz.x = *width - textureWidth/12;
+    staticpoz.y = 0;
+    staticpoz.w = textureWidth/12;
+    staticpoz.h = textureHeight;
+    position.x = 0;
+    position.y = 0;
+    position.w = textureWidth/12;
+    position.h = textureHeight;
+    SDL_RenderCopy(renderTarget,menuTextures[4],&position,&staticpoz);
     SDL_RenderPresent(renderTarget);
-
+    int frameTime = 0;
 
     while(onMenu) {
+        frameTime ++ ;
+        if(frameTime >= 70000) {
+         if(position.x + textureWidth/12 >= textureWidth) {
+            position.x = 0;
+            SDL_RenderClear(renderTarget);
+            if(*width != initial) {
+                if(*width == 1280) {
+                    initial = *width;
+                    staticpoz.x = *width - textureWidth/14;
+                    staticpoz.w = textureWidth/14;
+                    staticpoz.h = textureHeight - 50;
+                } else {
+                    initial = *width;
+                    staticpoz.x = *width - textureWidth/12;
+                    staticpoz.w = textureWidth/12;
+                    staticpoz.h = textureHeight;
+                }
+            }
+
+            sizes[0] = createSizeCopy(0,0,*width,*height,menuTextures[0]);
+            sizes[1] = createSizeCopy(((*width) - (*width)/4)/2,((*height) - (*height)/6)/4,(*width)/4,(*height)/6,menuTextures[1]);
+            sizes[2] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + sizes[1].h + 25,(*width)/4,(*height)/6,menuTextures[2]);
+            sizes[3] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + 2*sizes[1].h + 50,(*width)/4,(*height)/6,menuTextures[3]);
+            SDL_RenderCopy(renderTarget,menuTextures[4],&position,&staticpoz);
+            SDL_RenderPresent(renderTarget);
+        } else {
+            position.x += textureWidth/12;
+            SDL_RenderClear(renderTarget);
+
+            sizes[0] = createSizeCopy(0,0,*width,*height,menuTextures[0]);
+            sizes[1] = createSizeCopy(((*width) - (*width)/4)/2,((*height) - (*height)/6)/4,(*width)/4,(*height)/6,menuTextures[1]);
+            sizes[2] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + sizes[1].h + 25,(*width)/4,(*height)/6,menuTextures[2]);
+            sizes[3] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + 2*sizes[1].h + 50,(*width)/4,(*height)/6,menuTextures[3]);
+            SDL_RenderCopy(renderTarget,menuTextures[4],&position,&staticpoz);
+            SDL_RenderPresent(renderTarget);
+        }
+        frameTime = 0;
+        }
+
         SDL_Event ev;
         while(SDL_PollEvent(&ev)!=0) {
         if(ev.type == SDL_QUIT) {
@@ -302,6 +357,7 @@ int mainMenu(int *width, int *height) {
                             freeTextures(menuTextures,4);
                             return -1;
                         }
+                        frameTime = 70000 - 1;
                     }
                 }
 
