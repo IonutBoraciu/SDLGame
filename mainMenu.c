@@ -2,7 +2,7 @@
 
 SDL_Renderer *renderTarget;
 SDL_Window *window;
-
+int resState = 1;
 void initRender(SDL_Renderer *rendererTarget) {
     renderTarget = rendererTarget;
 }
@@ -50,14 +50,15 @@ void resizeElements(SDL_Rect sizes[10],SDL_Texture *textures[10], SDL_Texture *r
     resSizes[3] = createSizeCopy((width - 1.5*width/4)/2,(height - height/6)/4 + 100 + resSizes[2].h,width/4,height/8,resTexts[3]);
     resSizes[4] = createSizeCopy((width - 1.5*width/12)/2 + resSizes[2].w - 150,(height - height/14)/4 + 50,width/12,height/15,resTexts[4]);
     resSizes[5] = createSizeCopy((width - 1.5*width/12)/2 + resSizes[3].w - 150,(height - height/14)/4 + 110 + resSizes[2].h,width/12,height/15,resTexts[5]);
-    SDL_RenderPresent(renderTarget);
+
 }
 
 void resizeElements_1280(SDL_Rect sizes[10],SDL_Texture *textures[10], SDL_Texture *resTexts[10],SDL_Rect resSizes[10],int width, int height) {
     sizes[0] = createSize(0,0,width,height,textures[0]);
     sizes[1] = createSize((width - width/8)/2,8 * height/10,width/8,height/12,textures[1]);
     sizes[2] = createSize((width - width/4)/2,(height - height/6)/4 + 50,width/4,height/6,textures[2]);
-                            
+    SDL_SetWindowSize(window,1280,720);
+    SDL_Delay(20);                    
     resSizes[0] = createSizeCopy(0,0,width,height,resTexts[0]);
     resSizes[1] = createSizeCopy((width - width/8)/2,8 * height/10,width/8,height/12,resTexts[1]);
     resSizes[2] = createSizeCopy((width - 1.5*width/4)/2,(height - height/6)/4 + 50,width/4,height/8,resTexts[2]);
@@ -65,11 +66,75 @@ void resizeElements_1280(SDL_Rect sizes[10],SDL_Texture *textures[10], SDL_Textu
     resSizes[5] = createSizeCopy((width - 1.5*width/12)/2 + resSizes[3].w - 150,(height - height/14)/4 + 110 + resSizes[2].h,width/12,height/15,resTexts[4]);
     resSizes[4] = createSizeCopy((width - 1.5*width/12)/2 + resSizes[2].w - 150,(height - height/14)/4 + 50,width/12,height/15,resTexts[5]);
 
-    SDL_SetWindowSize(window,1280,720);
-    SDL_RenderPresent(renderTarget);
 }
 
-int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int *width, int *height) {
+struct smollStar {
+    SDL_Texture *smollText;
+    SDL_Rect posSmoll;
+    SDL_Rect staticSmoll;
+    int smollWidth, smollHeight;
+    int initial2;
+    int mode;
+};
+
+void updateSmallStar(SDL_Texture *textures[10],SDL_Rect sizes[10] ,SDL_Rect *position, SDL_Rect *staticpoz,int *width,int *height,int smollWidth,int smollHeight,SDL_Rect position2,SDL_Rect staticpoz2,int *initial, int mode,int *frameTime){
+    (*frameTime) = (*frameTime) + 1;
+    if(*frameTime >= 60000) {
+        SDL_RenderClear(renderTarget);
+        if(*width != *initial) {
+            if(*width == 1280) {
+                *initial = *width;
+                (*staticpoz).x = 33;
+                (*staticpoz).y = 350;
+                (*staticpoz).w = smollWidth/6;
+                (*staticpoz).h = smollHeight/1.5;
+             } else {
+                *initial = *width;
+                (*staticpoz).x = (*width)/38;
+                (*staticpoz).y = (*height)/3 + 1.5 * (*height)/10;
+                (*staticpoz).w = smollWidth/4;
+                (*staticpoz).h = smollHeight;
+             }
+        }
+
+
+        if((*position).x + smollWidth/4 >= smollWidth) {
+            (*position).x = 0;
+        } else {
+            (*position).x += smollWidth/4;
+        }
+        if(mode != 3) {
+            for(int i = 0; i < 3; i++) {
+                SDL_RenderCopy(renderTarget,textures[i],NULL,&sizes[i]);
+            }
+        }
+        if(mode == 1) {
+            SDL_RenderCopy(renderTarget,textures[3],NULL,&sizes[3]);
+        }
+        if(mode == 1)
+            SDL_RenderCopy(renderTarget,textures[4],&position2,&staticpoz2);
+        if(mode == 3) {
+            for(int i = 0; i < 4; i++) {
+                SDL_RenderCopy(renderTarget,textures[i],NULL,&sizes[i]);
+            }
+            if(resState == 1) {
+                SDL_RenderCopy(renderTarget,textures[4],NULL,&sizes[4]);
+                SDL_RenderCopy(renderTarget,textures[5],NULL,&sizes[5]);
+            } else {
+                SDL_RenderCopy(renderTarget,textures[4],NULL,&sizes[5]);
+                SDL_RenderCopy(renderTarget,textures[5],NULL,&sizes[4]);
+            }
+            SDL_RenderCopy(renderTarget,textures[6],position,staticpoz);
+        } else {
+        SDL_RenderCopy(renderTarget,textures[5],position,staticpoz);
+        }
+        SDL_RenderPresent(renderTarget);
+        *frameTime = 0;
+    }
+
+}
+
+int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int *width, int *height, struct smollStar vals) {
     SDL_RenderClear(renderTarget);
     SDL_Texture *resTexts[10];
     SDL_Rect resSizes[10];
@@ -93,6 +158,7 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
     // MARK
     resTexts[4] = LoadTexture("assets/mark.jpg",renderTarget);
     resTexts[5] = LoadTexture("assets/unmark.jpg",renderTarget);
+    resTexts[6] = vals.smollText;
     textSize = textSize + 2;
 
     // BUTTON FOR 1920
@@ -113,13 +179,16 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
     } else {
         resSizes[5] = createSizeCopy(((*width) - 1.5*(*width)/12)/2 + resSizes[3].w - 150,((*height) - (*height)/14)/4 + 110 + resSizes[2].h,(*width)/12,(*height)/15,resTexts[4]);
     }
+    int frameTime = 0;
 
+    SDL_RenderCopy(renderTarget,vals.smollText,&vals.posSmoll,&vals.staticSmoll);
     SDL_RenderPresent(renderTarget);
     int onResolution = 1;
     int state = 0;
 
     while(onResolution) {
         SDL_Event ev;
+        updateSmallStar(resTexts,resSizes,&vals.posSmoll,&vals.staticSmoll,width,height,vals.smollWidth,vals.smollHeight,vals.posSmoll,vals.staticSmoll,&vals.initial2,3,&frameTime);
         while(SDL_PollEvent(&ev)!=0) {
             if(ev.type == SDL_MOUSEBUTTONDOWN) {
                 if(ev.button.button == SDL_BUTTON_LEFT) {
@@ -142,13 +211,14 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
                     if(ev.button.x >= resSizes[4].x && ev.button.x <= resSizes[4].x + resSizes[4].w) {
                         if(ev.button.y >= resSizes[4].y && ev.button.y <= resSizes[4].y + resSizes[4].h) {
 
-                           
+                           resState = 1;
                            if(*width != 1920 || *height != 1080) {
                             SDL_RenderClear(renderTarget);
                             *width = 1920;
                             *height = 1080;
 
                             resizeElements(sizes,textures,resTexts,resSizes,*width,*height);
+                            frameTime = 60000 -1;
                             state = 7;
                            }
 
@@ -156,12 +226,13 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
                     }
                     if(ev.button.x >= resSizes[5].x && ev.button.x <= resSizes[5].x + resSizes[5].w) {
                         if(ev.button.y >= resSizes[5].y && ev.button.y <= resSizes[5].y + resSizes[5].h) {
+                            resState = 0;
                             if(*width != 1280 || *height != 720) {
                             SDL_RenderClear(renderTarget);
                             *width = 1280;
                             *height = 720;
-
                             resizeElements_1280(sizes,textures,resTexts,resSizes,*width,*height);
+                            frameTime = 60000 -1;
                             state = 7;
                            }
                         }
@@ -179,65 +250,14 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
     return state;
 
 }
-struct smollStar {
-    SDL_Texture *smollText;
-    SDL_Rect posSmoll;
-    SDL_Rect staticSmoll;
-    int smollWidth, smollHeight;
-    int initial2;
-    int mode;
-};
-
-void updateSmallStar(SDL_Texture *textures[10],SDL_Rect sizes[10] ,SDL_Rect *position, SDL_Rect *staticpoz,int *width,int *height,int smollWidth,int smollHeight,SDL_Rect position2,SDL_Rect staticpoz2,int *initial, int mode){
-    static int frameTime = 0;
-    frameTime++;
-    if(frameTime >= 70000) {
-        SDL_RenderClear(renderTarget);
-        if(*width != *initial) {
-            if(*width == 1280) {
-                *initial = *width;
-                (*staticpoz).x = 33;
-                (*staticpoz).y = 350;
-                (*staticpoz).w = smollWidth/6;
-                (*staticpoz).h = smollHeight/1.5;
-             } else {
-                *initial = *width;
-                (*staticpoz).x = (*width)/38;
-                (*staticpoz).y = (*height)/3 + 1.5 * (*height)/10;
-                (*staticpoz).w = smollWidth/4;
-                (*staticpoz).h = smollHeight;
-             }
-        }
 
 
-        if((*position).x + smollWidth/4 >= smollWidth) {
-            (*position).x = 0;
-
-            
-        } else {
-            (*position).x += smollWidth/4;
-        }
-        SDL_RenderCopy(renderTarget,textures[0],NULL,&sizes[0]);
-        SDL_RenderCopy(renderTarget,textures[1],NULL,&sizes[1]);
-        SDL_RenderCopy(renderTarget,textures[2],NULL,&sizes[2]);
-        if(mode == 1) {
-
-        SDL_RenderCopy(renderTarget,textures[3],NULL,&sizes[3]);
-        }
-        if(mode == 1)
-            SDL_RenderCopy(renderTarget,textures[4],&position2,&staticpoz2);
-        SDL_RenderCopy(renderTarget,textures[5],position,staticpoz);
-        
-        SDL_RenderPresent(renderTarget);
-        frameTime = 0;
-    }
-
-}
 
 int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int *width, int *height, struct smollStar vals) {
     SDL_RenderClear(renderTarget);
     SDL_Texture *setText[10];
     SDL_Rect setSize[10];
+    int frameTime = 0;
     // BACKGROUND
     setText[0] = LoadTexture("assets/starSet.png",renderTarget);
     setSize[0] = createSizeCopy(0,0,*width,*height,setText[0]);
@@ -249,6 +269,7 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
     // RESOLUTION
     setText[2] = LoadTexture("assets/resolution.png",renderTarget);
     setSize[2] = createSizeCopy((*width - *width/4)/2,(*height - *height/6)/4 + 50,(*width/4),(*height/6),setText[2]);
+    SDL_RenderCopy(renderTarget,textures[5],&vals.posSmoll,&vals.staticSmoll);
     SDL_RenderPresent(renderTarget);
 
     setText[5] = vals.smollText;
@@ -256,7 +277,7 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
     int onSettings = 1;
     while(onSettings) {
 
-        updateSmallStar(setText,setSize,&vals.posSmoll,&vals.staticSmoll,width,height,vals.smollWidth,vals.smollHeight,vals.posSmoll,vals.staticSmoll,&vals.initial2,0);
+        updateSmallStar(setText,setSize,&vals.posSmoll,&vals.staticSmoll,width,height,vals.smollWidth,vals.smollHeight,vals.posSmoll,vals.staticSmoll,&vals.initial2,0,&frameTime);
         SDL_Event ev;
         while(SDL_PollEvent(&ev)!=0) {
             if(ev.type == SDL_MOUSEBUTTONDOWN) {
@@ -269,15 +290,16 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                             for(int i = 0; i < used; i++) {
                                 SDL_RenderCopy(renderTarget,textures[i],NULL,&sizes[i]);
                             }
+                            SDL_RenderCopy(renderTarget,textures[5],&vals.posSmoll,&vals.staticSmoll);
+                            
                             SDL_RenderPresent(renderTarget);
                             freeTextures(setText,3);
-                            //SDL_SetWindowSize(window,1280,720);
                         }
                  
                     }
                     if(ev.button.x >= setSize[2].x && ev.button.x <= setSize[2].x + setSize[2].w) {
                         if(ev.button.y >= setSize[2].y && ev.button.y <= setSize[2].y + setSize[2].h) {
-                            int check = resolutionMenu(setText,setSize,3,width,height);
+                            int check = resolutionMenu(setText,setSize,3,width,height,vals);
                             if(check == -1) {
                                 freeTextures(setText,3);
                                 return -1;
@@ -287,9 +309,8 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                                 sizes[1] = createSize(((*width) - (*width)/4)/2,((*height) - (*height)/6)/4,(*width)/4,(*height)/6,textures[1]);
                                 sizes[2] = createSize(((*width) - sizes[1].w)/2,sizes[1].y + sizes[1].h + 25,(*width)/4,(*height)/6,textures[2]);
                                 sizes[3] = createSize(((*width) - sizes[1].w)/2,sizes[1].y + 2*sizes[1].h + 50,(*width)/4,(*height)/6,textures[3]);
-
+                                frameTime = 60000 - 1;
                             }
-
                         }
                     }
                 }
@@ -334,10 +355,10 @@ void updateStarSky(SDL_Texture *textures[10],SDL_Rect sizes[10],SDL_Rect *positi
         } else {
             (*position).x += textureWidth/12;
         }
-        sizes[0] = createSizeCopy(0,0,*width,*height,textures[0]);
-        sizes[1] = createSizeCopy(((*width) - (*width)/4)/2,((*height) - (*height)/6)/4,(*width)/4,(*height)/6,textures[1]);
-        sizes[2] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + sizes[1].h + 25,(*width)/4,(*height)/6,textures[2]);
-        sizes[3] = createSizeCopy(((*width) - sizes[1].w)/2,sizes[1].y + 2*sizes[1].h + 50,(*width)/4,(*height)/6,textures[3]);
+        for(int i = 0; i < 4; i++) {
+            SDL_RenderCopy(renderTarget,textures[i],NULL,&sizes[i]);
+        }
+
         SDL_RenderCopy(renderTarget,textures[5],&position2,&staticpoz2);
         SDL_RenderCopy(renderTarget,textures[4],position,staticpoz);
         SDL_RenderPresent(renderTarget);
@@ -393,6 +414,7 @@ int mainMenu(int *width, int *height) {
     staticSmoll.y = (*height)/3 + 1.5 * (*height)/10;
     staticSmoll.w = smollWidth/4;
     staticSmoll.h = smollHeight;
+    int frameTimeStar = 0;
 
 
 
@@ -404,7 +426,7 @@ int mainMenu(int *width, int *height) {
 
     while(onMenu) {
 
-        updateSmallStar(menuTextures,sizes,&posSmoll,&staticSmoll,width,height,smollWidth,smollHeight,position,staticpoz,&initial2,1);
+        updateSmallStar(menuTextures,sizes,&posSmoll,&staticSmoll,width,height,smollWidth,smollHeight,position,staticpoz,&initial2,1,&frameTimeStar);
         updateStarSky(menuTextures,sizes,&position,&staticpoz,textureWidth,height,width,textureHeight,&initial,&frameTime,posSmoll,staticSmoll);
 
         //initial = *width;
@@ -441,12 +463,15 @@ int mainMenu(int *width, int *height) {
                         vals.smollWidth = smollWidth;
                         vals.staticSmoll = staticSmoll;
                         vals.smollText = menuTextures[5];
+                        //printf("T1 %d\n",vals.staticSmoll.h);
                         int check = settingsMenu(0,menuTextures,sizes,4,width,height,vals);
                         if(check == -1) {
                             freeTextures(menuTextures,4);
                             return -1;
                         }
+                        //printf("T2 %d\n",vals.staticSmoll.h);
                         frameTime = 70000 - 1;
+                        frameTimeStar = 60000 - 1;
                     }
                 }
 
