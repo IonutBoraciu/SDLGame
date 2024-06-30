@@ -2,6 +2,7 @@
 
 SDL_Renderer *renderTarget;
 SDL_Window *window;
+Mix_Chunk* buttonSound;
 int resState = 1;
 void initRender(SDL_Renderer *rendererTarget) {
     renderTarget = rendererTarget;
@@ -9,6 +10,10 @@ void initRender(SDL_Renderer *rendererTarget) {
 
 void initWindow(SDL_Window *windowH) {
     window = windowH;
+}
+
+void initSound(char path[50]) {
+    buttonSound = Mix_LoadWAV(path);
 }
 
 void freeTextures(SDL_Texture *textures[10],int used) {
@@ -39,7 +44,7 @@ SDL_Rect createSize(int x,int y,int width,int height,SDL_Texture *textureTarget)
 
 void resizeElements(SDL_Rect sizes[10],SDL_Texture *textures[10], SDL_Texture *resTexts[10],SDL_Rect resSizes[10],int width, int height) {
 
-     sizes[0] = createSize(0,0,width,height,textures[0]);
+    sizes[0] = createSize(0,0,width,height,textures[0]);
     sizes[1] = createSize((width - width/8)/2,8 * height/10,width/8,height/12,textures[1]);
     sizes[2] = createSize((width - width/4)/2,(height - height/6)/4 + 50,width/4,height/6,textures[2]);
     SDL_SetWindowSize(window,width,height);
@@ -194,6 +199,8 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
                 if(ev.button.button == SDL_BUTTON_LEFT) {
                     if(ev.button.x >= resSizes[1].x && ev.button.x <= resSizes[1].x + resSizes[1].w) {
                         if(ev.button.y >= resSizes[1].y && ev.button.y <= resSizes[1].y + resSizes[1].h) {
+                            Mix_PlayChannel(-1, buttonSound, 0);
+                            SDL_Delay(150);
                             SDL_RenderClear(renderTarget);
 
                             for(int i = 0; i < used; i++) {
@@ -210,22 +217,24 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, int 
                     }  
                     if(ev.button.x >= resSizes[4].x && ev.button.x <= resSizes[4].x + resSizes[4].w) {
                         if(ev.button.y >= resSizes[4].y && ev.button.y <= resSizes[4].y + resSizes[4].h) {
-
-                           resState = 1;
-                           if(*width != 1920 || *height != 1080) {
-                            SDL_RenderClear(renderTarget);
-                            *width = 1920;
-                            *height = 1080;
-
-                            resizeElements(sizes,textures,resTexts,resSizes,*width,*height);
-                            frameTime = 60000 -1;
-                            state = 7;
-                           }
+                            Mix_PlayChannel(-1, buttonSound, 0);
+                            SDL_Delay(150);
+                            resState = 1;
+                            if(*width != 1920 || *height != 1080) {
+                                SDL_RenderClear(renderTarget);
+                                *width = 1920;
+                                *height = 1080;
+                                resizeElements(sizes,textures,resTexts,resSizes,*width,*height);
+                                frameTime = 60000 -1;
+                                state = 7;
+                            }
 
                         }
                     }
                     if(ev.button.x >= resSizes[5].x && ev.button.x <= resSizes[5].x + resSizes[5].w) {
                         if(ev.button.y >= resSizes[5].y && ev.button.y <= resSizes[5].y + resSizes[5].h) {
+                            Mix_PlayChannel(-1, buttonSound, 0);
+                            SDL_Delay(150);
                             resState = 0;
                             if(*width != 1280 || *height != 720) {
                             SDL_RenderClear(renderTarget);
@@ -284,6 +293,8 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                 if(ev.button.button == SDL_BUTTON_LEFT) {
                     if(ev.button.x >= setSize[1].x && ev.button.x <= setSize[1].x + setSize[1].w) {
                         if(ev.button.y >= setSize[1].y && ev.button.y <= setSize[1].y + setSize[1].h) {
+                            Mix_PlayChannel(-1, buttonSound, 0);
+                            SDL_Delay(150);
                             onSettings = 0;
                             SDL_RenderClear(renderTarget);
 
@@ -299,6 +310,8 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                     }
                     if(ev.button.x >= setSize[2].x && ev.button.x <= setSize[2].x + setSize[2].w) {
                         if(ev.button.y >= setSize[2].y && ev.button.y <= setSize[2].y + setSize[2].h) {
+                            Mix_PlayChannel(-1, buttonSound, 0);
+                            SDL_Delay(150);
                             int check = resolutionMenu(setText,setSize,3,width,height,vals);
                             if(check == -1) {
                                 freeTextures(setText,3);
@@ -370,7 +383,14 @@ int mainMenu(int *width, int *height) {
     int onMenu = 1;
     SDL_Texture *menuTextures[10];
     SDL_Rect sizes[10];
-
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        printf("not working\n");
+    }
+    //Mix_Chunk* buttonSound = Mix_LoadWAV("ign.wav");
+    initSound("ign.wav");
+    // if(buttonSound == NULL) {
+    //     printf("pfaaa\n");
+    // }
     // MAIN MENU BACKGROUND
     menuTextures[0] = LoadTexture("assets/stars.jpg",renderTarget);
     SDL_RenderClear(renderTarget);
@@ -441,13 +461,18 @@ int mainMenu(int *width, int *height) {
                 if(ev.button.x >= sizes[1].x && ev.button.x  <= sizes[1].x + sizes[1].w) {
                     if(ev.button.y >= sizes[1].y && ev.button.y  <= sizes[1].y+ sizes[1].h) {
                         onMenu = 0;
+                        Mix_PlayChannel(-1, buttonSound, 0);
+                        SDL_Delay(200);
                     }
+ 
                 }
 
                 // EXIT GAME
                 if(ev.button.x >= sizes[3].x && ev.button.x <= sizes[3].x + sizes[3].w) {
                     if(ev.button.y >= sizes[3].y && ev.button.y <= sizes[3].y + sizes[3].h) {
-                        freeTextures(menuTextures,4);
+                        Mix_PlayChannel(-1, buttonSound, 0);
+                        SDL_Delay(500);
+                        freeTextures(menuTextures,6);
                         return -1;
                     }
                 }
@@ -455,6 +480,8 @@ int mainMenu(int *width, int *height) {
                 // ENTER OPTIONS
                 if(ev.button.x >= sizes[2].x && ev.button.x <= sizes[2].x + sizes[2].w) {
                     if(ev.button.y >= sizes[2].y && ev.button.y <= sizes[2].y + sizes[2].h) {
+                        Mix_PlayChannel(-1, buttonSound, 0);
+                        SDL_Delay(150);
                         struct smollStar vals;
                         vals.initial2 = initial2;
                         vals.mode = 0;
@@ -466,7 +493,7 @@ int mainMenu(int *width, int *height) {
                         //printf("T1 %d\n",vals.staticSmoll.h);
                         int check = settingsMenu(0,menuTextures,sizes,4,width,height,vals);
                         if(check == -1) {
-                            freeTextures(menuTextures,4);
+                            freeTextures(menuTextures,6);
                             return -1;
                         }
                         //printf("T2 %d\n",vals.staticSmoll.h);
@@ -480,7 +507,7 @@ int mainMenu(int *width, int *height) {
         }
     }
     }
-    freeTextures(menuTextures,4);
+    freeTextures(menuTextures,6);
     return 0;
 }
 

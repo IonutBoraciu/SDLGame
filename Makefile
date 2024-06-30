@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -O2
-LIBS = -lSDL2 -lSDL2_image
+LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer
 
 SRCS = second_try.c mainMenu.c common.c
 OBJS = $(SRCS:.c=.o)

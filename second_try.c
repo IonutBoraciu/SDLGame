@@ -69,7 +69,7 @@ void treatAuroraAnimation(int *frameTime, SDL_Rect *playerPosition,int up,int do
 
 int main() {
     // VERY IMPORTANT DO NOT TOUCH.
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     const int FPS = 60;
     int frameTime = 0;
     int textureWidth,textureHeight;
@@ -80,6 +80,7 @@ int main() {
     SDL_Rect playerRect;
     SDL_Rect playerPosition;
     int startWidth = 1920, startHeight = 1080;
+
 
     window = SDL_CreateWindow("MyFirstGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,startWidth,startHeight,0);
     rendererTarget = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
