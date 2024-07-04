@@ -91,6 +91,7 @@ int main() {
     if(checkExit == -1){ 
         SDL_DestroyWindow(window);
         SDL_DestroyRenderer(rendererTarget);
+        SDL_Quit();
         return 0;
     }
 
@@ -127,9 +128,11 @@ int main() {
         SDL_RenderPresent(rendererTarget);
 
     }
+    IMG_Quit();
     SDL_DestroyWindow(window);
     SDL_DestroyTexture(currentImage);
     SDL_DestroyRenderer(rendererTarget);
+    SDL_Quit();
 
     return 0;
 
