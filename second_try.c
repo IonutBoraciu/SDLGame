@@ -82,7 +82,7 @@ int main() {
     int startWidth = 1920, startHeight = 1080;
 
 
-    window = SDL_CreateWindow("MyFirstGame",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,startWidth,startHeight,0);
+    window = SDL_CreateWindow("Star Hunter",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,startWidth,startHeight,0);
     rendererTarget = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     initRender(rendererTarget);
