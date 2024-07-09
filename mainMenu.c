@@ -21,7 +21,7 @@ void initSound(char path[50]) {
 
 void freeTextures(SDL_Texture *textures[10],int used) {
 
-    for(int i=0; i < used; i++) {
+    for(int i = 0; i < used; i++) {
         SDL_DestroyTexture(textures[i]);
     }
 }
@@ -101,8 +101,10 @@ void updateSmallStar(SDL_Texture *textures[10],SDL_Rect sizes[10] ,SDL_Rect *pos
             for(int i = 0; i < 4; i++) {
                 SDL_RenderCopy(renderTarget,textures[i],NULL,&sizes[i]);
             }
-            if(mode == 7)
+            if(mode == 7) {
                 SDL_RenderCopy(renderTarget,textures[6],NULL,&sizes[6]);
+                SDL_RenderCopy(renderTarget,textures[7],NULL,&sizes[7]);
+            }
         }
         if(mode == 1 || mode == 7)
             SDL_RenderCopy(renderTarget,textures[4],&position2,&staticpoz2);
@@ -196,9 +198,7 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, stru
                             }
                             SDL_RenderPresent(renderTarget);
 
-                            for(int i = 0; i < textSize; i++) {
-                                SDL_DestroyTexture(resTexts[i]);
-                            }
+                            freeTextures(resTexts,textSize);
 
                             onResolution = 0;
                         }
@@ -236,10 +236,7 @@ int resolutionMenu(SDL_Texture *textures[10], SDL_Rect sizes[10], int used, stru
                     }
                 }
             } else if(ev.type == SDL_QUIT) {
-                
-                for(int i = 0; i < textSize; i++) {
-                    SDL_DestroyTexture(resTexts[i]);
-                }
+                freeTextures(resTexts,textSize);
                 return -1;
             }
         }
@@ -318,23 +315,23 @@ void updateVolumeBar(SDL_Rect backButton, SDL_Texture *backText, int mode, SOUND
     Mix_PlayChannel(-1, buttonSound, 0);
 }
 
-void createNumbers(SDL_Texture *numbers,SDL_Rect *form_src,SDL_Rect *numbersSize,int offset,int volume,int *txtWidth,int *txtHeight,int heightOffset) 
+void createNumbers(SDL_Texture *numbers,SDL_Rect *numbersSize,int offset,int volume,int *txtWidth,int *txtHeight,int heightOffset,SOUND *vals,int poz) 
 {
     SDL_QueryTexture(numbers,NULL,NULL,txtWidth,txtHeight);
-    (*form_src).x = volume*(*txtWidth)/10;
-    (*form_src).y = 0;
-    (*form_src).w = (*txtWidth)/10;
-    (*form_src).h = (*txtHeight);
+    vals->form_src[poz].x = volume*(*txtWidth)/10;
+    vals->form_src[poz].y = 0;
+    vals->form_src[poz].w = (*txtWidth)/10;
+    vals->form_src[poz].h = (*txtHeight);
     (*numbersSize) = createSize((width-width/2)/2+(width/2)+50,(height-height/12)/4+heightOffset+offset,width/20,height/12,numbers);
     if(volume != 10) {
-        SDL_RenderCopy(renderTarget,numbers,form_src,numbersSize);
+        SDL_RenderCopy(renderTarget,numbers,&vals->form_src[poz],numbersSize);
     } else {
-        (*form_src).x = (*txtWidth)/10;
-        SDL_RenderCopy(renderTarget,numbers,form_src,numbersSize);
+        vals->form_src[poz].x = (*txtWidth)/10;
+        SDL_RenderCopy(renderTarget,numbers,&vals->form_src[poz],numbersSize);
   
-        (*form_src).x = 0;
+        vals->form_src[poz].x = 0;
         (*numbersSize).x += (*numbersSize).w + 10;
-        SDL_RenderCopy(renderTarget,numbers,form_src,numbersSize);
+        SDL_RenderCopy(renderTarget,numbers,&vals->form_src[poz],numbersSize);
         (*numbersSize).x -= (*numbersSize).w + 10;
     }
 }
@@ -351,9 +348,6 @@ void progressSound(SDL_Rect *config,int offset,int heightOffset,SDL_Rect soundSi
         
         *config = createSize((width - width/2)/2 + (soundSize[poz].w - soundSize[poz].x) - offset,height/4+soundSize[6].h+offset2/1.2,width/28,height/18,soundText[2]);
     } else if (*oldWidth != width) {
-       // printf("%d %d\n",(*config).x,(*config).y);
-       // printf("bullshit\n");
-       // printf("\n");
         if(flag == 1)
             (*config).x = (*config).x * 1280/1920;
         else
@@ -437,7 +431,8 @@ int soundSetting(SETT *sett) {
     soundText[3] = LoadTexture("assets/numbers.png",renderTarget);
     SDL_QueryTexture(soundText[3],NULL,NULL,&textureWidth,&textureHeight);
     SDL_Rect form_src;
-    createNumbers(soundText[3],&form_src,&soundSize[3],offset,*sett->volume[0],&textureWidth,&textureHeight,soundSize[6].h);
+    createNumbers(soundText[3],&soundSize[3],offset,*sett->volume[0],&textureWidth,&textureHeight,soundSize[6].h,&vals,0);
+    form_src = vals.form_src[0];
     numberT++;
     int old_val = currentWidth;
     progressSound(sett->config[0],offset,soundSize[6].h,soundSize,soundText,*sett->flag,1,&currentWidth);
@@ -467,7 +462,8 @@ int soundSetting(SETT *sett) {
     progressSound(sett->config[1],offset,soundSize[6].h,soundSize,soundText,*sett->flag,8,&currentWidth);
 
     SDL_Rect form_src2;
-    createNumbers(soundText[3],&form_src2,&soundSize[9],3*offset+soundSize[1].h+soundSize[7].h,*sett->volume[1],&textureWidth,&textureHeight,soundSize[6].h);
+    createNumbers(soundText[3],&soundSize[9],3*offset+soundSize[1].h+soundSize[7].h,*sett->volume[1],&textureWidth,&textureHeight,soundSize[6].h,&vals,1);
+    form_src2 = vals.form_src[1];
     if(*sett->volume[1])
         soundSize[10] = createSizeCopy((width-width/2)/2-width/8-50,(height-height/8)/4+soundSize[6].h+3*offset+soundSize[1].h+soundSize[7].h,width/8,height/8,soundText[4]);
     else
@@ -501,6 +497,7 @@ int soundSetting(SETT *sett) {
                                 SDL_RenderCopy(renderTarget,*sett->setText[i],NULL,sett->setSize[i]);
                             }
                             SDL_RenderPresent(renderTarget);
+                            freeTextures(soundText,9);
                             onSound = 0;
                             return 1;
                         }
@@ -576,6 +573,9 @@ int soundSetting(SETT *sett) {
                         }
                     }
                 }
+            } else if(ev.type == SDL_QUIT) {
+                freeTextures(soundText,9);
+                return -1;
             }
         }
 
@@ -648,7 +648,7 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                             SDL_RenderCopy(renderTarget,textures[5],&vals.posSmoll,&vals.staticSmoll);
 
                             SDL_RenderPresent(renderTarget);
-                            freeTextures(setText,3);
+                            freeTextures(setText,4);
                         }
                     }
                     if(ev.button.x >= setSize[2].x && ev.button.x <= setSize[2].x + setSize[2].w) {
@@ -673,6 +673,7 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                                 sizes[2] = createSizeCopy((width - sizes[1].w)/2,sizes[1].y + sizes[1].h + 25,width/4,height/6,textures[2]);
                                 sizes[3] = createSizeCopy((width - sizes[1].w)/2,sizes[1].y + 2*sizes[1].h + 50,width/4,height/6,textures[3]);
                                 sizes[6] = createSizeCopy((width - width/2)/2,50,width/2,height/8,textures[6]);
+                                sizes[7] = createSizeCopy(width - width/3,height-height/10,width/3,height/10,textures[7]);
                                 
                             }
                             frameTime = 60000 - 1;
@@ -686,13 +687,16 @@ int settingsMenu(int mode, SDL_Texture *textures[10], SDL_Rect sizes[10], int us
                             int check = soundSetting(&sett);
                             if (check != -1) {
                                 frameTime = 60000 -1;
+                            } else {
+                                freeTextures(setText,4);
+                                return -1;
                             }
 
                         }
                     }
                 }
             } else if(ev.type == SDL_QUIT) {
-                freeTextures(setText,3);
+                freeTextures(setText,4);
                 return -1;
             }
         }
@@ -738,6 +742,7 @@ void updateStarSky(SDL_Texture *textures[10],SDL_Rect sizes[10],SDL_Rect *positi
         SDL_RenderCopy(renderTarget,textures[6],NULL,&sizes[6]);
         SDL_RenderCopy(renderTarget,textures[5],&position2,&staticpoz2);
         SDL_RenderCopy(renderTarget,textures[4],position,staticpoz);
+        SDL_RenderCopy(renderTarget,textures[7],NULL,&sizes[7]);
         SDL_RenderPresent(renderTarget);
         *frameTime = 0;
     }
@@ -788,6 +793,7 @@ int mainMenu(int *widthCurrent, int *heightCurrent) {
 
 
 
+
     // STARS ANIMATION
     menuTextures[4] = LoadTexture("assets/testing.png",renderTarget);
     int textureWidth, textureHeight;
@@ -816,8 +822,8 @@ int mainMenu(int *widthCurrent, int *heightCurrent) {
     int frameTimeStar = 0;
 
 
-
-
+    menuTextures[7] = LoadTexture("assets/author.png",renderTarget);
+    sizes[7] = createSizeCopy(width - width/3,height-height/10,width/3,height/10,menuTextures[7]);
 
     SDL_RenderCopy(renderTarget,menuTextures[4],&position,&staticpoz);
     SDL_RenderCopy(renderTarget,menuTextures[5],&posSmoll,&staticSmoll);
@@ -852,7 +858,9 @@ int mainMenu(int *widthCurrent, int *heightCurrent) {
                     if(ev.button.y >= sizes[3].y && ev.button.y <= sizes[3].y + sizes[3].h) {
                         Mix_PlayChannel(-1, buttonSound, 0);
                         SDL_Delay(500);
-                        freeTextures(menuTextures,7);
+                        freeTextures(menuTextures,8);
+                        Mix_FreeChunk(buttonSound);
+                        Mix_FreeMusic(menuMusic);
                         return -1;
                     }
                 }
@@ -872,7 +880,9 @@ int mainMenu(int *widthCurrent, int *heightCurrent) {
                         vals.smollText = menuTextures[5];
                         int check = settingsMenu(0,menuTextures,sizes,4,vals);
                         if(check == -1) {
-                            freeTextures(menuTextures,7);
+                            freeTextures(menuTextures,8);
+                            Mix_FreeChunk(buttonSound);
+                            Mix_FreeMusic(menuMusic);
                             return -1;
                         }
                         frameTime = 70000 - 1;
@@ -887,7 +897,9 @@ int mainMenu(int *widthCurrent, int *heightCurrent) {
     }
     *widthCurrent = width;
     *heightCurrent = height;
-    freeTextures(menuTextures,6);
+    freeTextures(menuTextures,8);
+    Mix_FreeChunk(buttonSound);
+    Mix_FreeMusic(menuMusic);
     return 0;
 }
 
