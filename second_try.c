@@ -1,6 +1,35 @@
 #include "mainMenu.h"
+#include "inventory.h"
 
-void treatEvents (int *down,int *up,int *right, int *left, int *isRunning) {
+SDL_Rect camera;
+
+void initRect(SDL_Rect *obs,int x,int y, int w,int h) {
+    obs->x = x;
+    obs->y = y;
+    obs->h = h;
+    obs->w = w;
+}
+
+void updateCamera(PLAYER mainC,SDL_Rect border) {
+    int old_cam_x = camera.x;
+    int old_cam_y = camera.y;
+    camera.x = (mainC.playerPoz.x + mainC.playerPoz.w / 2) - (camera.w / 2);
+    camera.y = (mainC.playerPoz.y + mainC.playerPoz.h / 2) - (camera.h / 2);
+
+    if(camera.x < 0)
+        camera.x = 0;
+    if(camera.y < 0) {
+        camera.y = 0;
+    }
+    if(camera.x > border.w - camera.w) {
+        camera.x = old_cam_x;
+    }
+    if(camera.y > border.h - camera.h) {
+        camera.y = old_cam_y;
+    }
+}
+
+void treatEvents (int *down,int *up,int *right, int *left, int *isRunning, int *flag) {
     SDL_Event ev;
     while(SDL_PollEvent(&ev)!=0) {
         if(ev.type == SDL_QUIT) {
@@ -14,6 +43,8 @@ void treatEvents (int *down,int *up,int *right, int *left, int *isRunning) {
                 *right = 1;
             } else if(ev.key.keysym.sym == SDLK_a) {
                 *left = 1;
+            } else if(ev.key.keysym.sym == SDLK_i) {
+                *flag = 1;
             }
         } else if(ev.type == SDL_KEYUP) {
             if(ev.key.keysym.sym == SDLK_s) {
@@ -32,20 +63,21 @@ void treatEvents (int *down,int *up,int *right, int *left, int *isRunning) {
 void treatAuroraAnimation(int *frameTime, SDL_Rect *playerPosition,int up,int down,int left,int right,int frameHeight,int frameWidth,int textureWidth,SDL_Rect *playerRect) {
     (*frameTime)++;
         if (down) {
-            (*playerPosition).y += 2;
+            (*playerPosition).y += 3;
         }
         if (up) {
-           (*playerPosition).y -= 2;
+           (*playerPosition).y -= 3;
         }
         if (right) {
-            (*playerPosition).x += 2;
+            (*playerPosition).x += 3;
         }
         if (left) {
-            (*playerPosition).x -= 2;
+            (*playerPosition).x -= 3;
         }
         if (*frameTime == 5) {
             *frameTime = 0;
             if (down == 1) {
+
                 (*playerRect).y = 0;
             }
             if (up == 1) {
@@ -68,17 +100,17 @@ void treatAuroraAnimation(int *frameTime, SDL_Rect *playerPosition,int up,int do
 }
 
 int main() {
-    // VERY IMPORTANT DO NOT TOUCH.
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     const int FPS = 60;
     int frameTime = 0;
     int textureWidth,textureHeight;
     int frameWidth,frameHeight;
     SDL_Window* window = NULL;
-    SDL_Texture *currentImage = NULL;
     SDL_Renderer *rendererTarget = NULL;
-    SDL_Rect playerRect;
-    SDL_Rect playerPosition;
+    PLAYER mainC;
+    OBJECTS obj;
+    obj.total = 0;
+
     int startWidth = 1920, startHeight = 1080;
 
 
@@ -88,49 +120,73 @@ int main() {
     initRender(rendererTarget);
     initWindow(window);
     int checkExit = mainMenu(&startWidth,&startHeight);
-    if(checkExit == -1){ 
+    if(checkExit == -1) { 
         SDL_DestroyWindow(window);
         SDL_DestroyRenderer(rendererTarget);
         SDL_Quit();
         return 0;
     }
 
-    playerPosition.x = playerPosition.y = 0;
-    playerPosition.w = 48;
-    playerPosition.h = 64;
+    initRect(&camera,0,0,startWidth,startHeight);
 
-
+    initRect(&mainC.playerPoz,0,0,48,64);
 
     int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 
+    mainC.image = LoadTexture("assets/alula.png",rendererTarget);
+    SDL_Texture *map1 = LoadTexture("mapAlpha.png",rendererTarget);
+    SDL_Rect map1Size;
 
-    currentImage = LoadTexture("assets/alula.png",rendererTarget);
+    initRect(&map1Size,0,0,4000,4000);
+    SDL_RenderCopy(rendererTarget,map1,&camera,&map1Size);
+    updateCamera(mainC,map1Size);
 
-    SDL_QueryTexture(currentImage,NULL,NULL,&textureWidth,&textureHeight);
+
+    SDL_QueryTexture(mainC.image,NULL,NULL,&textureWidth,&textureHeight);
     frameWidth = textureWidth/4;
     frameHeight = textureHeight/4;
 
-    playerRect.x = playerRect.y = 0;
-    playerRect.w = frameWidth;
-    playerRect.h = frameHeight;
+    mainC.sourceSize.x = mainC.sourceSize.y = 0;
+    mainC.sourceSize.w = frameWidth;
+    mainC.sourceSize.h = frameHeight;
 
-    SDL_SetRenderDrawColor(rendererTarget,0xFF,0,0,0xFF);
+    obj.objs[obj.total] = LoadTexture("assets/back.png",rendererTarget);
+    initRect(&obj.objsSize[obj.total],2000,2000,100,100);
+    obj.total++;
+
+
 
     int isRunning = 1;
     int down = 0, up = 0, right = 0, left = 0;
-    while(isRunning) {
+    while (isRunning) {
+        int flag = -1;
+        treatEvents(&down,&up,&right,&left,&isRunning,&flag);
+        treatAuroraAnimation(&frameTime,&mainC.playerPoz,up,down,left,right,frameHeight,frameWidth,textureWidth,&mainC.sourceSize);
+        updateCamera(mainC,map1Size);
 
-        treatEvents(&down,&up,&right,&left,&isRunning);
-        treatAuroraAnimation(&frameTime,&playerPosition,up,down,left,right,frameHeight,frameWidth,textureWidth,&playerRect);
-        
+
         SDL_RenderClear(rendererTarget);
-        SDL_RenderCopy(rendererTarget,currentImage,&playerRect,&playerPosition);
+        SDL_RenderCopy(rendererTarget,map1,&camera,NULL);
+
+        SDL_Rect renderQuad = { mainC.playerPoz.x - camera.x, mainC.playerPoz.y - camera.y, mainC.playerPoz.w, mainC.playerPoz.h };
+        SDL_RenderCopy(rendererTarget, mainC.image, &mainC.sourceSize, &renderQuad);
+
+        renderObjsInView(obj,rendererTarget,camera);
+
         SDL_RenderPresent(rendererTarget);
+
+        if(flag == 1) {
+            down = up = right = left = 0;
+            inventory(camera,obj,mainC,rendererTarget,startWidth,startHeight,map1);
+        }
 
     }
     IMG_Quit();
     SDL_DestroyWindow(window);
-    SDL_DestroyTexture(currentImage);
+    SDL_DestroyTexture(mainC.image);
+    for(int i = 0; i < obj.total; i++) {
+        SDL_DestroyTexture(obj.objs[i]);
+    }
     SDL_DestroyRenderer(rendererTarget);
     SDL_Quit();
 
