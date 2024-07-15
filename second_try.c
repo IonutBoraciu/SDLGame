@@ -98,6 +98,15 @@ void treatAuroraAnimation(int *frameTime, SDL_Rect *playerPosition,int up,int do
             }
         }
 }
+void addItem(PLAYER *mainC, char location[50],SDL_Renderer *render) {
+    for(int i = 0; i < 24; i++) {
+        if(mainC->inv.back[i].state == 0) {
+            mainC->inv.back[i].state = 1;
+            mainC->inv.back[i].text = LoadTexture(location,render);
+            break;
+        }
+    }
+}
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -130,6 +139,10 @@ int main() {
     initRect(&camera,0,0,startWidth,startHeight);
 
     initRect(&mainC.playerPoz,0,0,48,64);
+    for(int i = 0; i < 24; i++)
+        mainC.inv.back[i].state = 0;
+    for(int i = 0; i < 11; i++)
+        mainC.inv.hotbar[i].state = 0;
 
     int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 
@@ -158,6 +171,8 @@ int main() {
 
     int isRunning = 1;
     int down = 0, up = 0, right = 0, left = 0;
+    addItem(&mainC,"assets/smallSound.png",rendererTarget);
+    addItem(&mainC,"assets/mark.jpg",rendererTarget);
     while (isRunning) {
         int flag = -1;
         treatEvents(&down,&up,&right,&left,&isRunning,&flag);
@@ -177,15 +192,20 @@ int main() {
 
         if(flag == 1) {
             down = up = right = left = 0;
-            inventory(camera,obj,mainC,rendererTarget,startWidth,startHeight,map1);
+            inventory(camera,obj,&mainC,rendererTarget,startWidth,startHeight,map1);
         }
 
     }
     IMG_Quit();
     SDL_DestroyWindow(window);
     SDL_DestroyTexture(mainC.image);
+    SDL_DestroyTexture(map1);
     for(int i = 0; i < obj.total; i++) {
         SDL_DestroyTexture(obj.objs[i]);
+    }
+    for(int i = 0; i < 24; i++) {
+        if(mainC.inv.back[i].state ==  1)
+        SDL_DestroyTexture(mainC.inv.back[i].text);
     }
     SDL_DestroyRenderer(rendererTarget);
     SDL_Quit();
