@@ -1,15 +1,12 @@
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
 #include <stdio.h>
 #include "common.h"
 
 typedef struct soundValues {
-    SDL_Rect *soundSize[20];
-    SDL_Texture **soundText[20];
+    SDL_Rect* soundSize[20];
+    SDL_Texture** soundText[20];
     int volume[2];
     int offset;
     SDL_Rect config[2];
@@ -21,14 +18,15 @@ typedef struct soundValues {
 } SOUND;
 
 typedef struct settValues {
-    SDL_Texture **setText[10];
-    SDL_Rect *setSize[10];
-    SDL_Rect *config[2];
-    int *volume[2];
-    int *flag;
+    SDL_Texture** setText[10];
+    SDL_Rect* setSize[10];
+    SDL_Rect* config[2];
+    int* volume[2];
+    int* flag;
 } SETT;
 
-int mainMenu(int *width, int *height);
-void initRender(SDL_Renderer *rendererTarget);
-void initWindow(SDL_Window *windowH);
+int mainMenu(int* width, int* height, int mode, int* vSound, int* vEffects);
+void initRender(SDL_Renderer* rendererTarget);
+void initWindow(SDL_Window* windowH);
 #endif
+

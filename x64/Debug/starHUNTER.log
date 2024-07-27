@@ -1,0 +1,6 @@
+﻿  life.c
+Y:\starHunter\starHUNTER\starHUNTER\life.c(48,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\life.c(8,41): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\life.c(63,36): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\life.c(64,36): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
+  starHUNTER.vcxproj -> Y:\starHunter\starHUNTER\x64\Debug\starHUNTER.exe
