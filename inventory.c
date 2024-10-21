@@ -14,20 +14,23 @@ SDL_Texture* createSnapShot(SDL_Rect camera, OBJECTS obj, PLAYER mainC, SDL_Text
     SDL_Rect renderQuad = { mainC.playerPoz.x - camera.x, mainC.playerPoz.y - camera.y, mainC.playerPoz.w, mainC.playerPoz.h };
     SDL_RenderCopy(renderTarget, mainC.image, &mainC.sourceSize, &renderQuad);
     renderObjsInView(obj, renderTarget, camera);
+    updateLife(&mainC, renderTarget, 0);
+
     SDL_SetRenderTarget(renderTarget, NULL);
     return snapShot;
 }
 
-void initSlots(SDL_Rect slots[3][8], SDL_Rect hotbar[11], SDL_Rect* mainWeapon) {
-    setSize(&slots[0][0], 455, 343, 72, 77);
+void initSlots(SDL_Rect slots[3][8], SDL_Rect hotbar[11], SDL_Rect* mainWeapon, PLAYER* mainC) {
+    setSize(&slots[0][0], 453, 342, 72, 77);
     float offset = 5;
     float offset2 = 0;
     float offset3 = 15;
 
     if (width != 1920) {
-        resize(&slots[0][0], (float)width / 1920, (float)height / 1080);
-        offset *= (float)width / 1920;
-        offset3 *= (float)width / 1920;
+        resize(&slots[0][0], (double)width / 1920, (double)height / 1080);
+        slots[0][0].x += 2.5 * (double)width / 1920; // for precision errors
+        offset *= (double)width / 1920;
+        offset3 *= (double)height / 1080;
         if (width > height * 2) {
             offset3 = 18;
         }
@@ -46,16 +49,18 @@ void initSlots(SDL_Rect slots[3][8], SDL_Rect hotbar[11], SDL_Rect* mainWeapon) 
         offset2 += offset3 + slots[j][0].h;
     }
 
-    setSize(&hotbar[0], 455, 760, 72, 77);
+    setSize(&hotbar[0], 453, 759, 72, 77);
     if (width != 1920) {
-        resize(&hotbar[0], (float)width/1920,(float)height/1080);
+        resize(&hotbar[0], (double)width / 1920, (double)height / 1080);
+        hotbar[0].x += 2.5 * (double)width / 1920;
     }
-    for (int i = 1; i < 11; i++)
+    for (int i = 1; i < 11; i++) {
         setSize(&hotbar[i], hotbar[i - 1].x + hotbar[i - 1].w + offset, hotbar[i - 1].y, hotbar[i - 1].w, hotbar[i - 1].h);
+    }
 
     setSize(mainWeapon, 1370, 745, 106, 106);
     if (width != 1920) {
-        resize(mainWeapon,(float)width/1920,(float)height/1080);
+        resize(mainWeapon, (float)width / 1920, (float)height / 1080);
     }
 }
 
@@ -75,9 +80,6 @@ void initBack(PLAYER mainC, SDL_Texture* snapShot, SDL_Texture* inventoryMenu, S
             else {
                 poz_j = i % 8;
             }
-            if (mainC.inv.back[i].text == NULL) {
-                printf("HOPAA\n");
-            }
             SDL_RenderCopy(renderTarget, mainC.inv.back[i].text, NULL, &slots[poz_i][poz_j]);
         }
     }
@@ -96,7 +98,8 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
     SDL_Rect slots[3][8];
     SDL_Rect hotbar[11];
     SDL_Rect mainWeapon;
-    initSlots(slots, hotbar, &mainWeapon);
+    SDL_RenderClear(render);
+    initSlots(slots, hotbar, &mainWeapon, mainC);
     oldWidth = widthCurr;
     oldHeight = heightCurr;
 
@@ -104,19 +107,21 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
     height = heightCurr;
     renderTarget = render;
     SDL_Texture* snapShot = createSnapShot(camera, obj, *mainC, map);
-    SDL_Texture* inventoryMenu = LoadTexture("assets/inventory.png", renderTarget);
+    SDL_Texture* inventoryMenu = LoadTexture("assets/inventory2.png", renderTarget);
     SDL_Rect inventSize = { 0,0,width,height };
 
     initBack(*mainC, snapShot, inventoryMenu, inventSize, slots, hotbar, mainWeapon);
+    treatSmallAlula(mainC);
+    SDL_RenderCopyF(renderTarget, mainC->life.alula, &mainC->life.src, &mainC->life.dest);
     SDL_RenderPresent(renderTarget);
-
-
 
     int isRunning = 1;
     int inArm = 0;
     ITEMS* aux = NULL;
     while (isRunning) {
         SDL_Event ev;
+        SDL_RenderClear(render);
+        initBack(*mainC, snapShot, inventoryMenu, inventSize, slots, hotbar, mainWeapon);
         if (inArm) {
             int x, y;
             SDL_GetMouseState(&x, &y);
@@ -124,9 +129,12 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
             initBack(*mainC, snapShot, inventoryMenu, inventSize, slots, hotbar, mainWeapon);
             SDL_Rect followMouse = { x,y,slots[0][0].w,slots[0][0].h };
             SDL_RenderCopy(renderTarget, aux->text, NULL, &followMouse);
+            treatSmallAlula(mainC);
+            SDL_RenderCopyF(renderTarget, mainC->life.alula, &mainC->life.src, &mainC->life.dest);
             SDL_RenderPresent(renderTarget);
         }
         while (SDL_PollEvent(&ev) != 0) {
+
             if (ev.type == SDL_QUIT) {
                 isRunning = 0;
             }
@@ -149,14 +157,35 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
                                     else if (mainC->inv.back[j * 8 + i].state == 0 && inArm == 1) {
                                         inArm = 0;
                                         mainC->inv.back[j * 8 + i].state = 1;
-                                        if (aux->text != mainC->inv.back[j * 8 + i].text) {
-                                            mainC->inv.back[j * 8 + i].text = LoadTexture(aux->text_location,renderTarget);
+                                        if (mainC->inv.back[j * 8 + i].text == NULL || aux->text != mainC->inv.back[j * 8 + i].text) {
                                             mainC->inv.back[j * 8 + i].type = aux->type;
+
                                             strcpy(mainC->inv.back[j * 8 + i].text_location, aux->text_location);
+                                            if (aux->type == 'w') {
+                                                char copy[250];
+                                                strcpy(copy, aux->text_location);
+                                                char* p = strtok(copy, " ");
+                                                mainC->inv.back[j * 8 + i].text = LoadTexture(p, renderTarget);
+                                                p = strtok(NULL, " ");
+                                                mainC->inv.back[j * 8 + i].weapon = LoadTexture(p, renderTarget);
+                                                mainC->inv.back[j * 8 + i].rWidth = aux->rWidth;
+                                                p = strtok(NULL, " ");
+                                                if (p != NULL) {
+                                                    mainC->inv.back[j * 8 + i].weaponLeft = LoadTexture(p, renderTarget);
+                                                    SDL_DestroyTexture(aux->weaponLeft);
+                                                }
+                                                SDL_DestroyTexture(aux->weapon);
+                                            }
+                                            else {
+                                                mainC->inv.back[j * 8 + i].text = LoadTexture(aux->text_location, renderTarget);
+                                            }
+
                                             SDL_DestroyTexture(aux->text);
                                             aux = NULL;
                                         }
                                         initBack(*mainC, snapShot, inventoryMenu, inventSize, slots, hotbar, mainWeapon);
+                                        treatSmallAlula(mainC);
+                                        SDL_RenderCopyF(renderTarget, mainC->life.alula, &mainC->life.src, &mainC->life.dest);
                                         SDL_RenderPresent(renderTarget);
                                     }
                                 }
@@ -170,14 +199,34 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
                                     if (mainC->inv.hotbar[i].state == 0) {
                                         inArm = 0;
                                         mainC->inv.hotbar[i].state = 1;
-                                        if (aux->text != mainC->inv.hotbar[i].text) {
-                                            mainC->inv.hotbar[i].text = LoadTexture(aux->text_location, renderTarget);
+                                        if (mainC->inv.hotbar[i].text == NULL || aux->text != mainC->inv.hotbar[i].text) {
+
                                             mainC->inv.hotbar[i].type = aux->type;
                                             strcpy(mainC->inv.hotbar[i].text_location, aux->text_location);
+                                            if (aux->type == 'w') {
+                                                char copy[250];
+                                                strcpy(copy, aux->text_location);
+                                                char* p = strtok(copy, " ");
+                                                mainC->inv.hotbar[i].text = LoadTexture(p, renderTarget);
+                                                p = strtok(NULL, " ");
+                                                mainC->inv.hotbar[i].weapon = LoadTexture(p, renderTarget);
+                                                p = strtok(NULL, " ");
+                                                if (p != NULL) {
+                                                    mainC->inv.hotbar[i].weaponLeft = LoadTexture(p, renderTarget);
+                                                    SDL_DestroyTexture(aux->weaponLeft);
+                                                }
+                                                mainC->inv.hotbar[i].rWidth = aux->rWidth;
+                                                SDL_DestroyTexture(aux->weapon);
+                                            }
+                                            else {
+                                                mainC->inv.hotbar[i].text = LoadTexture(aux->text_location, renderTarget);
+                                            }
                                             SDL_DestroyTexture(aux->text);
                                             aux = NULL;
                                         }
                                         initBack(*mainC, snapShot, inventoryMenu, inventSize, slots, hotbar, mainWeapon);
+                                        treatSmallAlula(mainC);
+                                        SDL_RenderCopyF(renderTarget, mainC->life.alula, &mainC->life.src, &mainC->life.dest);
                                         SDL_RenderPresent(renderTarget);
                                     }
                                 }
@@ -195,14 +244,28 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
                                 if (!mainC->inv.mainWeapon.state && aux->type == 'w') {
                                     inArm = 0;
                                     mainC->inv.mainWeapon.state = 1;
-                                    if (aux->text != mainC->inv.mainWeapon.text) {
-                                        mainC->inv.mainWeapon.text = LoadTexture(aux->text_location, renderTarget);
+                                    if (mainC->inv.mainWeapon.text == NULL || aux->text != mainC->inv.mainWeapon.text) {
+                                        char copy[250];
+                                        strcpy(copy, aux->text_location);
+                                        char* p = strtok(copy, " ");
+                                        mainC->inv.mainWeapon.text = LoadTexture(p, renderTarget);
+                                        p = strtok(NULL, " ");
+                                        mainC->inv.mainWeapon.weapon = LoadTexture(p, renderTarget);
+                                        p = strtok(NULL, " ");
+                                        if (p != NULL) {
+                                            mainC->inv.mainWeapon.weaponLeft = LoadTexture(p, renderTarget);
+                                            SDL_DestroyTexture(aux->weaponLeft);
+                                        }
                                         mainC->inv.mainWeapon.type = 'w';
                                         strcpy(mainC->inv.mainWeapon.text_location, aux->text_location);
+                                        mainC->inv.mainWeapon.rWidth = aux->rWidth;
                                         SDL_DestroyTexture(aux->text);
+                                        SDL_DestroyTexture(aux->weapon);
                                         aux = NULL;
                                     }
                                     initBack(*mainC, snapShot, inventoryMenu, inventSize, slots, hotbar, mainWeapon);
+                                    treatSmallAlula(mainC);
+                                    SDL_RenderCopyF(renderTarget, mainC->life.alula, &mainC->life.src, &mainC->life.dest);
                                     SDL_RenderPresent(renderTarget);
                                 }
                             }
@@ -219,6 +282,9 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
 
 
         }
+        treatSmallAlula(mainC);
+        SDL_RenderCopyF(renderTarget, mainC->life.alula, &mainC->life.src, &mainC->life.dest);
+        SDL_RenderPresent(renderTarget);
     }
 
 
@@ -226,16 +292,39 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
     SDL_DestroyTexture(inventoryMenu);
 
 }
-void addItem(PLAYER* mainC, char location[50], SDL_Renderer* render, char type) {
+void addItem(PLAYER* mainC, char location[250], SDL_Renderer* render, char type, int frames) {
 
     int free = 1;
-
+    char copy[250];
+    strcpy(copy, location);
     if (type == 'w') {
         if (mainC->inv.mainWeapon.state == 0) {
+            if (strchr(location, ' ') != NULL) {
+                char* p = strtok(location, " ");
+                mainC->inv.mainWeapon.text = LoadTexture(p, render);
+                p = strtok(NULL, " ");
+
+                mainC->inv.mainWeapon.weapon = LoadTexture(p, render);
+                p = strtok(NULL, " ");
+                if (p != NULL) {
+                    mainC->inv.mainWeapon.weaponLeft = LoadTexture(p, render);
+                }
+
+            }
+            else {
+                mainC->inv.mainWeapon.text = LoadTexture(location, render);
+            }
             mainC->inv.mainWeapon.state = 1;
-            mainC->inv.mainWeapon.text = LoadTexture(location, render);
             mainC->inv.mainWeapon.type = type;
-            strcpy_s(mainC->inv.mainWeapon.text_location, 100, location);
+            if (frames != -1) {
+                int width, height;
+                SDL_QueryTexture(mainC->inv.mainWeapon.weapon, NULL, NULL, &width, &height);
+                setSize(&mainC->inv.mainWeapon.sourcePostion, 0, 0, width / frames, height);
+                setSize(&mainC->inv.mainWeapon.currPosition, mainC->playerPoz.x - 40, mainC->playerPoz.y - 30, 38, 70);
+                mainC->inv.mainWeapon.rWidth = width;
+            }
+            strcpy(mainC->inv.mainWeapon.text_location, copy);
+
             free = 0;
         }
     }
@@ -245,7 +334,7 @@ void addItem(PLAYER* mainC, char location[50], SDL_Renderer* render, char type) 
             mainC->inv.hotbar[i].state = 1;
             mainC->inv.hotbar[i].text = LoadTexture(location, render);
             mainC->inv.hotbar[i].type = type;
-            strcpy_s(mainC->inv.hotbar[i].text_location, 100, location);
+            strcpy(mainC->inv.hotbar[i].text_location, location);
             free = 0;
         }
     }
@@ -255,7 +344,7 @@ void addItem(PLAYER* mainC, char location[50], SDL_Renderer* render, char type) 
             mainC->inv.back[i].state = 1;
             mainC->inv.back[i].text = LoadTexture(location, render);
             mainC->inv.back[i].type = type;
-            strcpy_s(mainC->inv.back[i].text_location, 100, location);
+            strcpy(mainC->inv.back[i].text_location, location);
             free = 0;
         }
     }

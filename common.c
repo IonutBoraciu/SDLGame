@@ -85,6 +85,19 @@ void setSize(SDL_Rect* object, int x, int y, int w, int h) {
 
 }
 
+void setSizeF(SDL_FRect* object, float x, float y, float w, float h) {
+    object->w = w;
+    object->x = x;
+    object->y = y;
+    object->h = h;
+}
+void resizeF(SDL_FRect* object, double ratioW, double radioH) {
+    object->x = (object->x * ratioW);
+    object->y = (object->y * radioH);
+    object->w = (object->w * ratioW);
+    object->h = (object->h * radioH);
+}
+
 SDL_Texture* create_snapshot_texture(SDL_Renderer* renderer, SDL_Texture** textures, int texture_count, int width, int height) {
 
     SDL_Texture* renderTarget = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);

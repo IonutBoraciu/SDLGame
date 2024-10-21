@@ -4,7 +4,7 @@ SDL_Renderer* renderTarget;
 SDL_Window* window;
 Mix_Chunk* buttonSound;
 Mix_Music* menuMusic;
-resState = 1;
+int resState = 1;
 int width, height;
 int volumeMusic;
 int volumeEffects;
@@ -62,6 +62,7 @@ void resizeElements(SDL_Rect sizes[10], SDL_Texture* textures[10], SDL_Texture* 
     resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[4]);
     resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[5]);
     resSizes[7] = createSizeCopy((width - 1.5 * width / 4.5) / 2, (height - height / 13) / 4 + 150 + resSizes[3].h + resSizes[2].h, width / 4.5, height / 13, resTexts[7]);
+    resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[5]);
 
 }
 
@@ -74,9 +75,14 @@ struct smollStar {
     int mode;
 };
 
-void updateSmallStar(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* position, SDL_Rect* staticpoz, int smollWidth, int smollHeight, SDL_Rect position2, SDL_Rect staticpoz2, int* initial, int mode, int* frameTime) {
-    (*frameTime) = (*frameTime) + 1;
-    if (*frameTime >= 200000) {
+void updateSmallStar(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* position, SDL_Rect* staticpoz, int smollWidth, int smollHeight, SDL_Rect position2, SDL_Rect staticpoz2, int* initial, int mode) {
+    static int frames = 150;
+
+    int currentTime = SDL_GetTicks();
+    static int lastFrameTime;
+
+    if (currentTime > lastFrameTime + frames) {
+        lastFrameTime = currentTime;
         SDL_RenderClear(renderTarget);
         if (width != *initial) {
             if (width == 1280) {
@@ -96,10 +102,10 @@ void updateSmallStar(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* po
             else {
                 *initial = width;
                 (*staticpoz).x = width / 31;
-                
+
                 (*staticpoz).w = smollWidth / 2.5;
                 (*staticpoz).h = smollHeight * 1.5;
-                (*staticpoz).y = height / 1.8 - (*staticpoz).h/2;
+                (*staticpoz).y = height / 1.8 - (*staticpoz).h / 2;
             }
         }
 
@@ -128,10 +134,17 @@ void updateSmallStar(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* po
             if (resState == 1) {
                 SDL_RenderCopy(renderTarget, textures[4], NULL, &sizes[4]);
                 SDL_RenderCopy(renderTarget, textures[5], NULL, &sizes[5]);
+                SDL_RenderCopy(renderTarget, textures[5], NULL, &sizes[8]);
             }
-            else {
+            else if (!resState) {
                 SDL_RenderCopy(renderTarget, textures[4], NULL, &sizes[5]);
                 SDL_RenderCopy(renderTarget, textures[5], NULL, &sizes[4]);
+                SDL_RenderCopy(renderTarget, textures[5], NULL, &sizes[8]);
+            }
+            else {
+                SDL_RenderCopy(renderTarget, textures[5], NULL, &sizes[5]);
+                SDL_RenderCopy(renderTarget, textures[5], NULL, &sizes[4]);
+                SDL_RenderCopy(renderTarget, textures[4], NULL, &sizes[8]);
             }
             SDL_RenderCopy(renderTarget, textures[6], position, staticpoz);
             SDL_RenderCopy(renderTarget, textures[7], NULL, &sizes[7]);
@@ -140,7 +153,6 @@ void updateSmallStar(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* po
             SDL_RenderCopy(renderTarget, textures[5], position, staticpoz);
         }
         SDL_RenderPresent(renderTarget);
-        *frameTime = 0;
     }
 
 }
@@ -172,30 +184,34 @@ int resolutionMenu(SDL_Texture* textures[10], SDL_Rect sizes[10], int used, stru
     resTexts[6] = vals.smollText;
     textSize = textSize + 2;
 
-    // BUTTON FOR 1920
-    if (width == 1920 && height == 1080) {
-        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[4]);
-    }
-    else {
-        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[5]);
-    }
-
-    // 1280 SPACE
     resTexts[3] = LoadTexture("assets/1280.png", renderTarget);
     resSizes[3] = createSizeCopy((width - 1.5 * width / 4) / 2, (height - height / 6) / 4 + 100 + resSizes[2].h, width / 4, height / 8, resTexts[3]);
     textSize++;
 
-    // BUTTON FOR 1280
-    if (width != 1280 || height != 720) {
+
+
+    // BUTTON FOR 1920
+    if (width == 1920) {
+        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[4]);
         resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[5]);
+        resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[5]);
+    }
+    else if (width == 1280) {
+        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[5]);
+        resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[4]);
+        resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[5]);
     }
     else {
-        resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[4]);
+        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[5]);
+        resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[5]);
+        resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[4]);
     }
 
-    resTexts[7] = LoadTexture("assets/fullscreen.png",renderTarget);
+
+
+
+    resTexts[7] = LoadTexture("assets/fullscreen.png", renderTarget);
     resSizes[7] = createSizeCopy((width - 1.5 * width / 4.5) / 2, (height - height / 13) / 4 + 150 + resSizes[3].h + resSizes[2].h, width / 4.5, height / 13, resTexts[7]);
-    int frameTime = 200000;
 
     SDL_RenderCopy(renderTarget, vals.smollText, &vals.posSmoll, &vals.staticSmoll);
     SDL_RenderPresent(renderTarget);
@@ -204,7 +220,7 @@ int resolutionMenu(SDL_Texture* textures[10], SDL_Rect sizes[10], int used, stru
 
     while (onResolution) {
         SDL_Event ev;
-        updateSmallStar(resTexts, resSizes, &vals.posSmoll, &vals.staticSmoll, vals.smollWidth, vals.smollHeight, vals.posSmoll, vals.staticSmoll, &vals.initial2, 3, &frameTime);
+        updateSmallStar(resTexts, resSizes, &vals.posSmoll, &vals.staticSmoll, vals.smollWidth, vals.smollHeight, vals.posSmoll, vals.staticSmoll, &vals.initial2, 3);
         while (SDL_PollEvent(&ev) != 0) {
             if (ev.type == SDL_MOUSEBUTTONDOWN) {
                 if (ev.button.button == SDL_BUTTON_LEFT) {
@@ -217,6 +233,7 @@ int resolutionMenu(SDL_Texture* textures[10], SDL_Rect sizes[10], int used, stru
                             for (int i = 0; i < used; i++) {
                                 SDL_RenderCopy(renderTarget, textures[i], NULL, &sizes[i]);
                             }
+                            updateSmallStar(resTexts, resSizes, &vals.posSmoll, &vals.staticSmoll, vals.smollWidth, vals.smollHeight, vals.posSmoll, vals.staticSmoll, &vals.initial2, 3);
                             SDL_RenderPresent(renderTarget);
 
                             freeTextures(resTexts, textSize);
@@ -238,7 +255,6 @@ int resolutionMenu(SDL_Texture* textures[10], SDL_Rect sizes[10], int used, stru
                                 width = 1920;
                                 height = 1080;
                                 resizeElements(sizes, textures, resTexts, resSizes, 50);
-                                frameTime = 270000 - 1;
                                 state = 7;
                             }
 
@@ -257,24 +273,21 @@ int resolutionMenu(SDL_Texture* textures[10], SDL_Rect sizes[10], int used, stru
                                 width = 1280;
                                 height = 720;
                                 resizeElements(sizes, textures, resTexts, resSizes, 50);
-                                frameTime = 270000 - 1;
                                 state = 7;
                             }
                         }
                     }
-                    if (ev.button.x >= resSizes[7].x && ev.button.x <= resSizes[7].x + resSizes[7].w) {
-                        if (ev.button.y >= resSizes[7].y && ev.button.y <= resSizes[7].y + resSizes[7].h) {
+                    if (ev.button.x >= resSizes[8].x && ev.button.x <= resSizes[8].x + resSizes[8].w) {
+                        if (ev.button.y >= resSizes[8].y && ev.button.y <= resSizes[8].y + resSizes[8].h) {
                             Mix_PlayChannel(-1, buttonSound, 0);
                             SDL_Delay(150);
-                            resState = 0;
+                            resState = 2;
                             if (width != fwidth || height != fheight) {
                                 SDL_RenderClear(renderTarget);
                                 SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
                                 width = fwidth;
                                 height = fheight;
                                 resizeElements(sizes, textures, resTexts, resSizes, 50);
-                                
-                                frameTime = 270000 - 1;
                                 state = 7;
                             }
                         }
@@ -458,7 +471,7 @@ int soundSetting(SETT* sett) {
     if (width == 1280) {
         offset = 30;
     }
-    else if (width == 1920){
+    else if (width == 1920) {
         offset = 45;
     }
     else {
@@ -591,7 +604,7 @@ int soundSetting(SETT* sett) {
                             *sett->config[0] = vals.config[0];
                             volumeLevel = vals.volumeLevel;
                             form_src = vals.form_src[0];
-
+                            volumeEffects = 0;
                             updateVolumeBar(*sett->setSize[1], *sett->setText[1], 0, &vals);
                         }
                     }
@@ -628,7 +641,7 @@ int soundSetting(SETT* sett) {
                             *sett->config[1] = vals.config[1];
                             volumeLevel = vals.volumeLevel;
                             form_src2 = vals.form_src[1];
-
+                            volumeMusic = 0;
                             updateVolumeBar(*sett->setSize[1], *sett->setText[1], 1, &vals);
                         }
                     }
@@ -649,7 +662,6 @@ int settingsMenu(int mode, SDL_Texture* textures[10], SDL_Rect sizes[10], int us
     SDL_RenderClear(renderTarget);
     SDL_Texture* setText[10];
     SDL_Rect setSize[10];
-    int frameTime = 200000;
     SETT sett;
     static SDL_Rect config = { 0,0,0,0 };
     static SDL_Rect configSecond = { 0,0,0,0 };
@@ -691,7 +703,7 @@ int settingsMenu(int mode, SDL_Texture* textures[10], SDL_Rect sizes[10], int us
     int onSettings = 1;
     while (onSettings) {
 
-        updateSmallStar(setText, setSize, &vals.posSmoll, &vals.staticSmoll, vals.smollWidth, vals.smollHeight, vals.posSmoll, vals.staticSmoll, &vals.initial2, 0, &frameTime);
+        updateSmallStar(setText, setSize, &vals.posSmoll, &vals.staticSmoll, vals.smollWidth, vals.smollHeight, vals.posSmoll, vals.staticSmoll, &vals.initial2, 0);
         SDL_Event ev;
         while (SDL_PollEvent(&ev) != 0) {
             if (ev.type == SDL_MOUSEBUTTONDOWN) {
@@ -737,7 +749,6 @@ int settingsMenu(int mode, SDL_Texture* textures[10], SDL_Rect sizes[10], int us
                                 sizes[7] = createSizeCopy(width - width / 3, height - height / 10, width / 3, height / 10, textures[7]);
 
                             }
-                            frameTime = 270000 - 1;
                         }
                     }
                     if (ev.button.x >= setSize[3].x && ev.button.x <= setSize[3].x + setSize[3].w) {
@@ -746,10 +757,7 @@ int settingsMenu(int mode, SDL_Texture* textures[10], SDL_Rect sizes[10], int us
                             SDL_Delay(150);
 
                             int check = soundSetting(&sett);
-                            if (check != -1) {
-                                frameTime = 270000 - 1;
-                            }
-                            else {
+                            if (check == -1) {
                                 freeTextures(setText, 4);
                                 return -1;
                             }
@@ -775,9 +783,13 @@ void initStarSky(SDL_Rect* position, SDL_Rect* staticpoz, int textureWidth, int 
 
     setSize(position, 0, 0, textureWidth / 12, textureHeight);
 }
-void updateStarSky(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* position, SDL_Rect* staticpoz, int textureWidth, int textureHeight, int* initial, int* frameTime, SDL_Rect position2, SDL_Rect staticpoz2) {
-    *frameTime = *frameTime + 1;
-    if (*frameTime >= 270000) {
+void updateStarSky(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* position, SDL_Rect* staticpoz, int textureWidth, int textureHeight, int* initial, SDL_Rect position2, SDL_Rect staticpoz2) {
+    static int frames = 150;
+
+    int currentTime = SDL_GetTicks();
+    static int lastFrameTime;
+    if (currentTime > lastFrameTime + frames) {
+        lastFrameTime = currentTime;
         SDL_RenderClear(renderTarget);
         if (width != *initial) {
             if (width == 1280) {
@@ -808,11 +820,11 @@ void updateStarSky(SDL_Texture* textures[10], SDL_Rect sizes[10], SDL_Rect* posi
         SDL_RenderCopy(renderTarget, textures[4], position, staticpoz);
         SDL_RenderCopy(renderTarget, textures[7], NULL, &sizes[7]);
         SDL_RenderPresent(renderTarget);
-        *frameTime = 0;
     }
 }
 
 int mainMenu(int* widthCurrent, int* heightCurrent, int mode, int* vSound, int* vEffects) {
+
     height = *heightCurrent;
     width = *widthCurrent;
     int onMenu = 1;
@@ -887,16 +899,13 @@ int mainMenu(int* widthCurrent, int* heightCurrent, int mode, int* vSound, int* 
     SDL_Rect staticSmoll;
 
     setSize(&posSmoll, 0, 0, smollWidth / 4, smollHeight);
-    if(width == 1920)
+    if (width == 1920)
         setSize(&staticSmoll, width / 38, (float)height / 3 + 1.5 * height / 10, smollWidth / 4, smollHeight);
-    else if(width == 1280)
+    else if (width == 1280)
         setSize(&staticSmoll, 33, 350, smollWidth / 6, smollHeight / 1.5);
     else {
         setSize(&staticSmoll, width / 31, height / 1.8 - smollHeight * 1.5 / 2, smollWidth / 2.5, smollHeight * 1.5);
     }
-
-    int frameTimeStar = 0;
-
 
     menuTextures[7] = LoadTexture("assets/author.png", renderTarget);
     sizes[7] = createSizeCopy(width - width / 3, height - height / 10, width / 3, height / 10, menuTextures[7]);
@@ -904,12 +913,11 @@ int mainMenu(int* widthCurrent, int* heightCurrent, int mode, int* vSound, int* 
     SDL_RenderCopy(renderTarget, menuTextures[4], &position, &staticpoz);
     SDL_RenderCopy(renderTarget, menuTextures[5], &posSmoll, &staticSmoll);
     SDL_RenderPresent(renderTarget);
-    int frameTime = 0;
 
     while (onMenu) {
 
-        updateSmallStar(menuTextures, sizes, &posSmoll, &staticSmoll, smollWidth, smollHeight, position, staticpoz, &initial2, 7, &frameTimeStar);
-        updateStarSky(menuTextures, sizes, &position, &staticpoz, textureWidth, textureHeight, &initial, &frameTime, posSmoll, staticSmoll);
+        updateSmallStar(menuTextures, sizes, &posSmoll, &staticSmoll, smollWidth, smollHeight, position, staticpoz, &initial2, 7);
+        updateStarSky(menuTextures, sizes, &position, &staticpoz, textureWidth, textureHeight, &initial, posSmoll, staticSmoll);
 
         SDL_Event ev;
         while (SDL_PollEvent(&ev) != 0) {
@@ -963,8 +971,6 @@ int mainMenu(int* widthCurrent, int* heightCurrent, int mode, int* vSound, int* 
                                 Mix_FreeMusic(menuMusic);
                                 return -1;
                             }
-                            frameTime = 270000 - 1;
-                            frameTimeStar = 270000 - 1;
                         }
                     }
 
@@ -976,12 +982,12 @@ int mainMenu(int* widthCurrent, int* heightCurrent, int mode, int* vSound, int* 
     *widthCurrent = width;
     *heightCurrent = height;
     *vSound = volumeMusic;
+
     *vEffects = volumeEffects;
     freeTextures(menuTextures, 8);
     Mix_FreeChunk(buttonSound);
     Mix_FreeMusic(menuMusic);
     SDL_SetRenderDrawColor(renderTarget, 0, 0, 0, 0);
-
     return 0;
 }
 

@@ -2,12 +2,8 @@
 
 
 void updateLife(PLAYER *mainC, SDL_Renderer *rd,int flag) {
-	static int lastLife = -1;
-
-
+	static float lastLife = -1;
 	int fullHearts = mainC->life.life_value/10;
-	int offset_x = 0;
-	
 	int offset = mainC->life.destH.w + 10;
 	float restHeart = mainC->life.life_value - ((int)mainC->life.life_value / 10) * 10;
 	int totalHearts = fullHearts;
@@ -17,7 +13,6 @@ void updateLife(PLAYER *mainC, SDL_Renderer *rd,int flag) {
 	}
 	int totalWidth = totalHearts * (mainC->life.destH.w + 10) - 10;
 	int totalHeight = mainC->life.destH.h;
-
 	if (mainC->life.life_value != lastLife || flag) {
 		if (mainC->life.snapShot) {
 			SDL_DestroyTexture(mainC->life.snapShot);
@@ -48,8 +43,10 @@ void updateLife(PLAYER *mainC, SDL_Renderer *rd,int flag) {
 		lastLife = mainC->life.life_value;
 	}
 	SDL_Rect destLife = { mainC->life.destH.x,mainC->life.destH.y,totalWidth,totalHeight };
-	if(mainC->life.snapShot)
+	if (mainC->life.snapShot) {
 		SDL_RenderCopy(rd, mainC->life.snapShot, NULL, &destLife);
+
+	}
 }
 
 void initLife(PLAYER* mainC, SDL_Renderer* rd,int w,int h) {
@@ -86,5 +83,22 @@ void removeLife(PLAYER* mainC, float life) {
 	mainC->life.life_value -= life;
 	if (mainC->life.life_value < 0) {
 		mainC->life.life_value = 0;
+	}
+}
+
+void treatSmallAlula(PLAYER* mainC) {
+	static int frameTime = 150;
+
+	int currentTime = SDL_GetTicks();
+	static int lastFrameTime;
+
+	if (currentTime > lastFrameTime + frameTime)  {
+		lastFrameTime = currentTime;
+		if (mainC->life.src.x + mainC->life.txtWidth / 4 + 20 <= mainC->life.txtWidth) {
+			mainC->life.src.x = mainC->life.src.x + mainC->life.txtWidth / 4;
+		}
+		else {
+			mainC->life.src.x = 0;
+		}
 	}
 }

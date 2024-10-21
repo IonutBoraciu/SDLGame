@@ -44,6 +44,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -102,15 +103,15 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Y:\starHunter\SDL2_image\include;Y:\starHunter\SDL2_mixer\include;Y:\starHunter\SDL2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Y:\MSYS2\mingw64\lib\glib-2.0\include;Y:\MSYS2\mingw64\include\glib-2.0;Y:\starHunter\SDL2_image\include;Y:\starHunter\SDL2_mixer\include;Y:\starHunter\SDL2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>Y:\starHunter\SDL2_mixer\lib\x64;Y:\starHunter\SDL2_image\lib\x64;Y:\starHunter\SDL2\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>Y:\MSYS2\mingw64\lib;Y:\starHunter\SDL2_mixer\lib\x64;Y:\starHunter\SDL2_image\lib\x64;Y:\starHunter\SDL2\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libglib-2.0.dll.a;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -130,7 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animation.c" />
+    <ClCompile Include="cJSON.c" />
     <ClCompile Include="common.c" />
+    <ClCompile Include="enemy.c" />
     <ClCompile Include="gameMechanics.c" />
     <ClCompile Include="inventory.c" />
     <ClCompile Include="life.c" />
@@ -138,13 +142,20 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
     <ClCompile Include="mainMenu.c" />
+    <ClCompile Include="map.c" />
+    <ClCompile Include="printText.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animation.h" />
+    <ClInclude Include="cJSON.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="gameMechanics.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="life.h" />
     <ClInclude Include="mainMenu.h" />
+    <ClInclude Include="map.h" />
+    <ClInclude Include="printText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
