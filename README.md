@@ -28,7 +28,7 @@ A dynamic text box displays dialogue to the player, accompanied by the face of t
 
 The game world is built using a 2D map created with Tiled, offering flexibility and depth. The map is exported in a .json file format, which is loaded directly into the game for easy modification and updates.
 
-![Map GIF](demo/max.gif)
+![Map GIF](demo/map.gif)
 
 ### Sound
 
