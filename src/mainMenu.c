@@ -6,8 +6,8 @@ Mix_Chunk* buttonSound;
 Mix_Music* menuMusic;
 int resState = 1;
 int width, height;
-int volumeMusic;
-int volumeEffects;
+int volumeMusic = 64;
+int volumeEffects = 64;
 
 void initRender(SDL_Renderer* rendererTarget) {
     renderTarget = rendererTarget;
@@ -191,24 +191,9 @@ int resolutionMenu(SDL_Texture* textures[10], SDL_Rect sizes[10], int used, stru
 
 
     // BUTTON FOR 1920
-    if (width == 1920) {
-        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[4]);
-        resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[5]);
-        resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[5]);
-    }
-    else if (width == 1280) {
-        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[5]);
-        resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[4]);
-        resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[5]);
-    }
-    else {
-        resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[5]);
-        resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[5]);
-        resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[4]);
-    }
-
-
-
+    resSizes[4] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[2].w - 150, (height - height / 14) / 4 + 50, width / 12, height / 15, resTexts[4]);
+    resSizes[5] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 110 + resSizes[2].h, width / 12, height / 15, resTexts[4]);
+    resSizes[8] = createSizeCopy((width - 1.5 * width / 12) / 2 + resSizes[3].w - 150, (height - height / 14) / 4 + 150 + 2 * resSizes[2].h, width / 12, height / 15, resTexts[4]);
 
     resTexts[7] = LoadTexture("assets/fullscreen.png", renderTarget);
     resSizes[7] = createSizeCopy((width - 1.5 * width / 4.5) / 2, (height - height / 13) / 4 + 150 + resSizes[3].h + resSizes[2].h, width / 4.5, height / 13, resTexts[7]);
@@ -323,9 +308,9 @@ void displayNumber(SDL_Rect sizeNumber, SOUND* vals, int poz) {
 void updateVolumeBar(SDL_Rect backButton, SDL_Texture* backText, int mode, SOUND* vals) {
     SDL_RenderClear(renderTarget);
     SDL_RenderCopy(renderTarget, *vals->soundText[0], NULL, &(*vals->soundSize[0]));
-
     if (vals->volume[0] != 10 && !mode) {
         vals->form_src[0].x = vals->volume[0] * (vals->textureWidth / 10);
+        
     }
     if (vals->volume[1] != 10 && mode) {
         vals->form_src[1].x = vals->volume[1] * (vals->textureWidth / 10);
@@ -415,10 +400,7 @@ void progressSound(SDL_Rect* config, int offset, int heightOffset, SDL_Rect soun
         *config = createSize((width - width / 2) / 2 + (soundSize[poz].w - soundSize[poz].x) - offset, height / 4 + soundSize[6].h + offset2 / 1.2, width / 28, height / 18, soundText[2]);
     }
     else if (*oldWidth != width) {
-        if (flag == 1)
-            (*config).x = (*config).x * 1280 / 1920;
-        else
-            (*config).x = (*config).x * 1920 / 1280;
+        (*config).x = (*config).x * width / *oldWidth;
         (*config).y = height / 4 + heightOffset + offset2 / 1.2;
         (*config).w = width / 28;
         (*config).h = height / 18;
@@ -516,6 +498,7 @@ int soundSetting(SETT* sett) {
 
     soundText[4] = LoadTexture("assets/up.png", renderTarget);
     soundText[5] = LoadTexture("assets/mute.png", renderTarget);
+
     if (*sett->volume[0])
         soundSize[4] = createSizeCopy((width - width / 2) / 2 - width / 8 - 50, (height - height / 8) / 4 + soundSize[6].h + offset, width / 8, height / 8, soundText[4]);
     else
@@ -580,7 +563,6 @@ int soundSetting(SETT* sett) {
                             int volumeLevel = (clickPosition / volumeStepWidth) * (128 / 10);
                             int volume10 = volumeLevel / 12;
                             *sett->volume[0] = volume10;
-
                             if (volumeLevel != 0) {
                                 volumeLevel += 8;
                             }
@@ -604,7 +586,12 @@ int soundSetting(SETT* sett) {
                             *sett->config[0] = vals.config[0];
                             volumeLevel = vals.volumeLevel;
                             form_src = vals.form_src[0];
-                            volumeEffects = 0;
+                            if (volumeEffects != 0) {
+                                volumeEffects = 0;
+                            }
+                            else {
+                                volumeEffects = 64;
+                            }
                             updateVolumeBar(*sett->setSize[1], *sett->setText[1], 0, &vals);
                         }
                     }
@@ -641,7 +628,12 @@ int soundSetting(SETT* sett) {
                             *sett->config[1] = vals.config[1];
                             volumeLevel = vals.volumeLevel;
                             form_src2 = vals.form_src[1];
-                            volumeMusic = 0;
+                            if (volumeMusic != 0) {
+                                volumeMusic = 0;
+                            }
+                            else {
+                                volumeMusic = 64;
+                            }
                             updateVolumeBar(*sett->setSize[1], *sett->setText[1], 1, &vals);
                         }
                     }

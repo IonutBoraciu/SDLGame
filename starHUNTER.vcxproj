@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Y:\MSYS2\mingw64\lib\glib-2.0\include;Y:\MSYS2\mingw64\include\glib-2.0;Y:\starHunter\SDL2_image\include;Y:\starHunter\SDL2_mixer\include;Y:\starHunter\SDL2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Y:\starHunter\starHUNTER\starHUNTER\src;Y:\MSYS2\mingw64\lib\glib-2.0\include;Y:\MSYS2\mingw64\include\glib-2.0;Y:\starHunter\SDL2_image\include;Y:\starHunter\SDL2_mixer\include;Y:\starHunter\SDL2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,31 +131,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="animation.c" />
-    <ClCompile Include="cJSON.c" />
-    <ClCompile Include="common.c" />
-    <ClCompile Include="enemy.c" />
-    <ClCompile Include="gameMechanics.c" />
-    <ClCompile Include="inventory.c" />
-    <ClCompile Include="life.c" />
     <ClCompile Include="main.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="mainMenu.c" />
-    <ClCompile Include="map.c" />
-    <ClCompile Include="printText.c" />
+    <ClCompile Include="src\animation.c" />
+    <ClCompile Include="src\cJSON.c" />
+    <ClCompile Include="src\common.c" />
+    <ClCompile Include="src\enemy.c" />
+    <ClCompile Include="src\gameMechanics.c" />
+    <ClCompile Include="src\inventory.c" />
+    <ClCompile Include="src\life.c" />
+    <ClCompile Include="src\mainMenu.c" />
+    <ClCompile Include="src\map.c" />
+    <ClCompile Include="src\printText.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="animation.h" />
-    <ClInclude Include="cJSON.h" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="enemy.h" />
-    <ClInclude Include="gameMechanics.h" />
-    <ClInclude Include="inventory.h" />
-    <ClInclude Include="life.h" />
-    <ClInclude Include="mainMenu.h" />
-    <ClInclude Include="map.h" />
-    <ClInclude Include="printText.h" />
+    <ClInclude Include="src\animation.h" />
+    <ClInclude Include="src\cJSON.h" />
+    <ClInclude Include="src\common.h" />
+    <ClInclude Include="src\enemy.h" />
+    <ClInclude Include="src\gameMechanics.h" />
+    <ClInclude Include="src\inventory.h" />
+    <ClInclude Include="src\life.h" />
+    <ClInclude Include="src\mainMenu.h" />
+    <ClInclude Include="src\map.h" />
+    <ClInclude Include="src\printText.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

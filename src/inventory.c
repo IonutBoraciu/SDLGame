@@ -6,14 +6,25 @@ int height;
 int oldWidth;
 int oldHeight;
 SDL_Renderer* renderTarget;
-
-SDL_Texture* createSnapShot(SDL_Rect camera, OBJECTS obj, PLAYER mainC, SDL_Texture* map) {
+SDL_Texture* createSnapShot(SDL_Rect camera, OBJECTS obj, PLAYER mainC, SDL_Texture* map, MAP *mp,int leftRight) {
     SDL_Texture* snapShot = SDL_CreateTexture(renderTarget, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height);
     SDL_SetRenderTarget(renderTarget, snapShot);
-    SDL_RenderCopy(renderTarget, map, &camera, NULL);
+    SDL_SetRenderDrawColor(renderTarget, 0, 0, 0, 0);  // RGBA: transparent
+    SDL_RenderClear(renderTarget);
+    renderMap(renderTarget, mp, 5, 100, 100, 32, 32, 0, camera);
+    renderMap(renderTarget, mp, 8, 100, 100, 32, 32, 7, camera);
+    renderObject(renderTarget, mp, camera);
     SDL_Rect renderQuad = { mainC.playerPoz.x - camera.x, mainC.playerPoz.y - camera.y, mainC.playerPoz.w, mainC.playerPoz.h };
     SDL_RenderCopy(renderTarget, mainC.image, &mainC.sourceSize, &renderQuad);
+    renderMap(renderTarget, mp, 7, 100, 100, 32, 32, 5, camera);
     renderObjsInView(obj, renderTarget, camera);
+    if (mainC.inv.mainWeapon.state) {
+        SDL_Rect renderTurret = { mainC.inv.mainWeapon.currPosition.x - camera.x, mainC.inv.mainWeapon.currPosition.y - camera.y, mainC.inv.mainWeapon.currPosition.w,mainC.inv.mainWeapon.currPosition.h };
+        if (leftRight)
+            SDL_RenderCopy(renderTarget, mainC.inv.mainWeapon.weapon, &mainC.inv.mainWeapon.sourcePostion, &renderTurret);
+        else
+            SDL_RenderCopy(renderTarget, mainC.inv.mainWeapon.weaponLeft, &mainC.inv.mainWeapon.sourcePostion, &renderTurret);
+    }
     updateLife(&mainC, renderTarget, 0);
 
     SDL_SetRenderTarget(renderTarget, NULL);
@@ -93,7 +104,7 @@ void initBack(PLAYER mainC, SDL_Texture* snapShot, SDL_Texture* inventoryMenu, S
 
 }
 
-void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render, int widthCurr, int heightCurr, SDL_Texture* map) {
+void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render, int widthCurr, int heightCurr, SDL_Texture* map, MAP *mp, int leftRight) {
 
     SDL_Rect slots[3][8];
     SDL_Rect hotbar[11];
@@ -106,7 +117,7 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
     width = widthCurr;
     height = heightCurr;
     renderTarget = render;
-    SDL_Texture* snapShot = createSnapShot(camera, obj, *mainC, map);
+    SDL_Texture* snapShot = createSnapShot(camera, obj, *mainC, map,mp,leftRight);
     SDL_Texture* inventoryMenu = LoadTexture("assets/inventory2.png", renderTarget);
     SDL_Rect inventSize = { 0,0,width,height };
 
@@ -161,6 +172,7 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
                                             mainC->inv.back[j * 8 + i].type = aux->type;
 
                                             strcpy(mainC->inv.back[j * 8 + i].text_location, aux->text_location);
+                                            mainC->inv.back[j * 8 + i].f = aux->f;
                                             if (aux->type == 'w') {
                                                 char copy[250];
                                                 strcpy(copy, aux->text_location);
@@ -203,6 +215,7 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
 
                                             mainC->inv.hotbar[i].type = aux->type;
                                             strcpy(mainC->inv.hotbar[i].text_location, aux->text_location);
+                                            mainC->inv.hotbar[i].f = aux->f;
                                             if (aux->type == 'w') {
                                                 char copy[250];
                                                 strcpy(copy, aux->text_location);
@@ -292,7 +305,7 @@ void inventory(SDL_Rect camera, OBJECTS obj, PLAYER* mainC, SDL_Renderer* render
     SDL_DestroyTexture(inventoryMenu);
 
 }
-void addItem(PLAYER* mainC, char location[250], SDL_Renderer* render, char type, int frames) {
+void addItem(PLAYER* mainC, char location[250], SDL_Renderer* render, char type, int frames, void (*f)(int,...)) {
 
     int free = 1;
     char copy[250];
@@ -334,6 +347,7 @@ void addItem(PLAYER* mainC, char location[250], SDL_Renderer* render, char type,
             mainC->inv.hotbar[i].state = 1;
             mainC->inv.hotbar[i].text = LoadTexture(location, render);
             mainC->inv.hotbar[i].type = type;
+            mainC->inv.hotbar[i].f = f;
             strcpy(mainC->inv.hotbar[i].text_location, location);
             free = 0;
         }
@@ -344,6 +358,7 @@ void addItem(PLAYER* mainC, char location[250], SDL_Renderer* render, char type,
             mainC->inv.back[i].state = 1;
             mainC->inv.back[i].text = LoadTexture(location, render);
             mainC->inv.back[i].type = type;
+            mainC->inv.back[i].f = f;
             strcpy(mainC->inv.back[i].text_location, location);
             free = 0;
         }

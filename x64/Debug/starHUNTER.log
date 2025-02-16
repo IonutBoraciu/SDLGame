@@ -1,126 +1,17 @@
-﻿  animation.c
-  cJSON.c
-  common.c
-  enemy.c
-  gameMechanics.c
+﻿  main.c
+Y:\starHunter\starHUNTER\starHUNTER\main.c(88,5): warning C4026: function declared with formal parameter list
+Y:\starHunter\starHUNTER\starHUNTER\main.c(174,6): warning C4101: 'firstgids': unreferenced local variable
+Y:\starHunter\starHUNTER\starHUNTER\main.c(173,15): warning C4101: 'tilesets': unreferenced local variable
+Y:\starHunter\starHUNTER\starHUNTER\main.c(175,6): warning C4101: 'widthText': unreferenced local variable
   inventory.c
-Y:\starHunter\starHUNTER\starHUNTER\animation.c(36,27): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\animation.c(39,27): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\animation.c(43,27): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\animation.c(46,27): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(17,9): warning C4013: 'printf' undefined; assuming extern returning int
-Y:\starHunter\starHUNTER\starHUNTER\common.c(60,30): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(61,29): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(62,30): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(63,29): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(67,30): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(68,30): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(69,30): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(70,30): warning C4244: '*=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(74,17): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(75,17): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(76,17): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(77,17): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(95,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(96,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(97,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\common.c(98,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(47,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(48,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(22,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(23,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(137,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(138,41): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(114,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\enemy.c(115,15): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\gameMechanics.c(34,41): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\gameMechanics.c(39,74): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\gameMechanics.c(47,31): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(31,46): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(32,33): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(33,35): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(43,77): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(43,101): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(46,68): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(55,44): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\inventory.c(58,63): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
-  life.c
-Y:\starHunter\starHUNTER\starHUNTER\life.c(6,41): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\life.c(58,70): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\life.c(58,95): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\life.c(60,36): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\life.c(61,36): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-  main.c
-Y:\starHunter\starHUNTER\starHUNTER\main.c(68,5): warning C4026: function declared with formal parameter list
-Y:\starHunter\starHUNTER\starHUNTER\main.c(156,6): warning C4101: 'firstgids': unreferenced local variable
-Y:\starHunter\starHUNTER\starHUNTER\main.c(155,15): warning C4101: 'tilesets': unreferenced local variable
-Y:\starHunter\starHUNTER\starHUNTER\main.c(157,6): warning C4101: 'widthText': unreferenced local variable
-  mainMenu.c
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(60,60): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(61,60): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(62,81): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(63,81): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(64,62): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(64,139): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(65,81): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(93,46): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(98,45): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(106,45): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(107,46): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(108,47): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(178,60): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(188,60): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(195,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(196,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(197,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(200,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(201,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(202,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(205,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(206,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(207,85): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(214,62): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(214,139): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(411,23): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(415,132): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(422,49): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(443,38): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(903,61): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(905,68): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(907,56): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(907,92): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\mainMenu.c(907,111): warning C4244: 'function': conversion from 'double' to 'int', possible loss of data
-  map.c
-Y:\starHunter\starHUNTER\starHUNTER\map.c(8,12): warning C4101: 'dest': unreferenced local variable
-Y:\starHunter\starHUNTER\starHUNTER\map.c(74,47): warning C4244: 'function': conversion from '__int64' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(151,31): warning C4244: '=': conversion from 'double' to '__int64', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(172,66): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(173,66): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(165,49): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(166,49): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(177,61): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(178,61): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(199,47): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(200,47): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(201,51): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(268,25): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(269,25): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\map.c(270,25): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-  printText.c
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(29,50): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(30,28): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(33,18): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(36,34): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(75,40): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(76,33): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(77,35): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(78,35): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(79,36): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(80,38): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(81,36): warning C4244: '*=': conversion from 'double' to 'int', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(116,41): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(124,9): warning C4013: 'islower' undefined; assuming extern returning int
-Y:\starHunter\starHUNTER\starHUNTER\printText.c(128,14): warning C4013: 'isupper' undefined; assuming extern returning int
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(42,46): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(43,33): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(44,35): warning C4244: '*=': conversion from 'double' to 'float', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(54,77): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(54,101): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(57,68): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(66,44): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+Y:\starHunter\starHUNTER\starHUNTER\src\inventory.c(69,63): warning C4244: 'function': conversion from 'float' to 'int', possible loss of data
   Generating Code...
      Creating library Y:\starHunter\starHUNTER\x64\Debug\starHUNTER.lib and object Y:\starHunter\starHUNTER\x64\Debug\starHUNTER.exp
   starHUNTER.vcxproj -> Y:\starHunter\starHUNTER\x64\Debug\starHUNTER.exe

@@ -14,6 +14,11 @@ typedef struct map {
 	int *idObjs;
 	int totalBord;
 	int totalObjs;
+
+	int numLayers;
+	int width;
+	int height;
+
 }MAP;
 
 void renderMap(SDL_Renderer* renderer, MAP* map, int numLayers, int width, int height, int tileWidth, int tileHeight, int start, SDL_Rect camera);
@@ -22,3 +27,4 @@ void parseMap(const char* filename, MAP* map, int numLayers, int width, int heig
 void initTileSets(MAP* map, SDL_Renderer* rd);
 int isWalkable(MAP* map, SDL_Rect playerPoz);
 void renderObject(SDL_Renderer* renderer, MAP* map, SDL_Rect camera);
+void createColissionMap(MAP* map);

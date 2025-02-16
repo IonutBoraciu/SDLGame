@@ -1,6 +1,6 @@
 #include "animation.h"
 
-void treatAuroraAnimation(SDL_Rect* playerPosition, int up, int down, int left, int right, int frameHeight, int frameWidth, int textureWidth, SDL_Rect* playerRect, int force, int* spX, int* spY, aTime *time, MAP* map) {
+void treatAuroraAnimation(SDL_Rect* playerPosition, int up, int down, int left, int right, int frameHeight, int frameWidth, int textureWidth, SDL_Rect* playerRect, int force, int* spX, int* spY, aTime *time, MAP* map, int speed) {
     const int animationFrameTime = 95;
     int currentTime = SDL_GetTicks();
     int deltaTime = currentTime - time->lastTime;
@@ -15,19 +15,19 @@ void treatAuroraAnimation(SDL_Rect* playerPosition, int up, int down, int left, 
     int val_lr = 0;
     if (force != 2) {
         if (down) {
-            speedY += 450 * speedFactor;
+            speedY += speed * speedFactor;
             val_ud += 2;
         }
         if (up) {
-            speedY -= 450 * speedFactor;
+            speedY -= speed * speedFactor;
             val_ud -= 2;
         }
         if (right) {
-            speedX += 450 * speedFactor;
+            speedX += speed * speedFactor;
             val_lr += 2;
         }
         if (left) {
-            speedX -= 450 * speedFactor;
+            speedX -= speed * speedFactor;
             val_lr -= 2;
         }
         if ((up || down) && (right || left)) {

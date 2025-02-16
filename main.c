@@ -10,6 +10,20 @@
 #include "enemy.h"
 #include "map.h"
 SDL_Rect camera;
+void increaseHealth(int count, ...) {
+	va_list args;
+	va_start(args, count);
+
+	PLAYER* point = va_arg(args,PLAYER *);
+	addLife(point, 20);
+}
+
+void increaseSpeed(int count, ...) {
+	va_list args;
+	va_start(args, count);
+	PLAYER* point = va_arg(args, PLAYER*);
+	point->speed += 100;
+}
 
 void treatEvents(int* down, int* up, int* right, int* left, int* isRunning, int* flag) {
 	SDL_Event ev;
@@ -31,13 +45,19 @@ void treatEvents(int* down, int* up, int* right, int* left, int* isRunning, int*
 				*left = 1;
 			}
 			else if (ev.key.keysym.sym == SDLK_i) {
-				*flag = 1;
+				*flag = -2;
 			}
 			else if (ev.key.keysym.sym == SDLK_ESCAPE) {
-				*flag = 2;
+				*flag = -3;
 			}
-			else if (ev.key.keysym.sym == SDLK_1) {
-				*flag = 3;
+			else if (ev.key.keysym.sym >= SDLK_1 && ev.key.keysym.sym <= SDLK_9) {
+				*flag = ev.key.keysym.sym - 48;
+			}
+			else if (ev.key.keysym.sym == SDLK_0) {
+				*flag = 10;
+			}
+			else if (ev.key.keysym.sym == SDLK_MINUS) {
+				*flag = 11;
 			}
 			else if (ev.key.keysym.sym == SDLK_o) {
 				*flag = -7;
@@ -74,7 +94,7 @@ int main() {
 	SDL_Window* window = NULL;
 	SDL_Renderer* rendererTarget = NULL;
 	PLAYER mainC;
-	mainC.thread = 0;
+	mainC.speed = 450;
 	OBJECTS obj;
 	GAME_MECHANICS gm;
 	MY_SOUND sound;
@@ -108,7 +128,6 @@ int main() {
 	int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
 	IMG_Init(imgFlags);
 
-
 	init_stuff(startWidth, startHeight, &mainC, rendererTarget, &textureWidth, &textureHeight,&camera,&sound);
 	frameWidth = textureWidth / 4;
 	frameHeight = textureHeight / 4;
@@ -124,15 +143,14 @@ int main() {
 	obj.objs[obj.total] = LoadTexture("assets/back.png", rendererTarget);
 	setSize(&obj.objsSize[obj.total], 2000, 2000, 100, 100);
 	obj.total++;
-	addItem(&mainC, "assets/turretFrame.png assets/turret_r.png assets/turret_l.png",rendererTarget,'w',24);
-	addItem(&mainC, "assets/smallSound.png", rendererTarget, 'i',-1);
-	addItem(&mainC, "assets/mark.jpg", rendererTarget, 'i',-1);
-	addItem(&mainC, "assets/mark.jpg", rendererTarget, 'i',-1);
-	addItem(&mainC, "assets/mark.jpg", rendererTarget, 'i',-1);
+	addItem(&mainC, "assets/turretFrame.png assets/turret_r.png assets/turret_l.png",rendererTarget,'w',24, NULL);
+	addItem(&mainC, "assets/health.png", rendererTarget, 'c',-1, increaseHealth);
+	addItem(&mainC, "assets/speed.png", rendererTarget, 'c',-1,increaseSpeed);
+	addItem(&mainC, "assets/page.png", rendererTarget, 't',-1, NULL);
 	SDL_Rect spawnPoint;
 	int nOfEn = 0;
 	setSize(&spawnPoint, 1000, 1000, 48, 64);
-	addEnemy("assets/robot.png", spawnPoint, enemies, rendererTarget, 4, 4,&nOfEn,500,500);
+//	addEnemy("assets/robot.png", spawnPoint, enemies, rendererTarget, 4, 4,&nOfEn,500,500);
 	mainC.time.lastAnimationTime = 0;
 	mainC.time.lastTime = 0;
 
@@ -157,10 +175,9 @@ int main() {
 	int widthText[10];
 	initTileSets(&mp, rendererTarget);
 	parseMap("assets/map.json",&mp,11,100,100);
-
+	createColissionMap(&mp);
 
 	while (isRunning) {
-
 		int flag = -1;
 		int old_down = down;
 		int old_up = up;
@@ -169,10 +186,10 @@ int main() {
 		int speedX = 0, speedY = 0;
 		treatEvents(&down, &up, &right, &left, &isRunning, &flag);
 		if (old_down != down || old_up != up || old_left != left || old_right != right) {
-			treatAuroraAnimation(&mainC.playerPoz, up, down, left, right, frameHeight, frameWidth, textureWidth, &mainC.sourceSize, 1,&speedX,&speedY,&mainC.time,&mp);
+			treatAuroraAnimation(&mainC.playerPoz, up, down, left, right, frameHeight, frameWidth, textureWidth, &mainC.sourceSize, 1,&speedX,&speedY,&mainC.time,&mp,mainC.speed);
 		}
 		else {
-			treatAuroraAnimation(&mainC.playerPoz, up, down, left, right, frameHeight, frameWidth, textureWidth, &mainC.sourceSize, 0, &speedX, &speedY,&mainC.time,&mp);
+			treatAuroraAnimation(&mainC.playerPoz, up, down, left, right, frameHeight, frameWidth, textureWidth, &mainC.sourceSize, 0, &speedX, &speedY,&mainC.time,&mp,mainC.speed);
 		}
 		treatTurretAnimation(&mainC, 0, speedX, speedY);
 		updateCamera(mainC, gm.map1Size, &camera);
@@ -199,15 +216,14 @@ int main() {
 				SDL_RenderCopy(rendererTarget, mainC.inv.mainWeapon.weaponLeft, &mainC.inv.mainWeapon.sourcePostion, &renderTurret);
 		}
 
-		attack(enemies, nOfEn, mainC, camera);
-
+		//attack(enemies, nOfEn, mainC, camera);
 		for (int i = 0; i < nOfEn; i++) {
 			SDL_Rect poz = enemies[i].destSize;
 			if (SDL_HasIntersection(&poz, &camera)) {
 				SDL_Rect cameraRect = { poz.x - camera.x, poz.y - camera.y, poz.w, poz.h };
 				DIR copy = enemies[i].dir;
 				if (copy.up + copy.down + copy.left + copy.right >= 1) {
-					treatAuroraAnimation(&enemies[i].destSize, copy.up, copy.down, copy.left, copy.right, 64, 48, enemies[i].width, &enemies[i].sourceSize, 2, &speedX, &speedY, &enemies[i].time,&mp);
+					treatAuroraAnimation(&enemies[i].destSize, copy.up, copy.down, copy.left, copy.right, 64, 48, enemies[i].width, &enemies[i].sourceSize, 2, &speedX, &speedY, &enemies[i].time,&mp,500);
 				}
 				if (enemies[i].destSize.x == enemies[i].spawnPoint.x && enemies[i].destSize.y == enemies[i].spawnPoint.y) {
 					enemies[i].sourceSize.x = 0;
@@ -223,11 +239,12 @@ int main() {
 		updateHotbar(rendererTarget, &mainC);
 		updateLife(&mainC, rendererTarget, 0);
 
-		if (flag == 1) {
+		if (flag == -2) {
 			down = up = right = left = 0;
-			inventory(camera, obj, &mainC, rendererTarget, startWidth, startHeight, gm.map1);
+			inventory(camera, obj, &mainC, rendererTarget, startWidth, startHeight, gm.map1,&mp,leftRight);
 		}
-		if (flag == 2) {
+
+		if (flag == -3) {
 			down = up = right = left = 0;
 			int old_width = startWidth;
 			int old_height = startHeight;
@@ -267,9 +284,25 @@ int main() {
 		}
 
 		if (flag == -7) {
-			char message[256] = "This garbage...actually, really works?!!!! like really? Damn, i am good at this aren't I? Now lets do some limit breaking";
+			char message[256] = "Hello, the feature actually works!";
 			printToSreen(rendererTarget, message, gm.messageBox, sBox, gm.alulaFace, startWidth, startHeight, alphabet,sound,mainC);
 			down = up = left = right = 0;
+		}
+		if (flag >= 1 && flag <= 11) {
+			if (mainC.inv.hotbar[flag - 1].state) {
+				if (mainC.inv.hotbar[flag - 1].f != NULL) {
+					mainC.inv.hotbar[flag - 1].f(1, &mainC);
+					if (mainC.inv.hotbar[flag - 1].type == 'c') {
+						mainC.inv.hotbar[flag - 1].state = 0;
+						SDL_DestroyTexture(mainC.inv.hotbar[flag - 1].text);
+					}
+				}
+				else if (mainC.inv.hotbar[flag - 1].type == 't') {
+					char message[256] = "Welcome to my first game made in C, only using the SDL library! Hope you will enjoy my demo!";
+					printToSreen(rendererTarget, message, gm.messageBox, sBox, gm.alulaFace, startWidth, startHeight, alphabet, sound, mainC);
+					down = up = left = right = 0;
+				}
+			}
 		}
 		SDL_RenderCopyF(rendererTarget, mainC.life.alula, &mainC.life.src, &mainC.life.dest);
 		treatSmallAlula(&mainC);

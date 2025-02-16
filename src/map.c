@@ -110,6 +110,9 @@ void parseMap(const char* filename, MAP* map, int numLayers, int width, int heig
 	fseek(file, 0, SEEK_END);
 	long fileSize = ftell(file);
 	fseek(file, 0, SEEK_SET);
+	map->numLayers = numLayers;
+	map->width = width;
+	map->height = height;
 
 	char* fileContent = malloc(fileSize + 1);
 	fread(fileContent, 1, fileSize, file);
@@ -293,6 +296,26 @@ int checkBox(long long int mapID, MAP* map) {
 		}
 	}
 	return 1;
+}
+
+void createColissionMap(MAP *map) {
+				long long int** colMap;
+				colMap = calloc(map->width, sizeof(long long int*));
+				for (int i = 0; i < map->width; i++) {
+								colMap[i] = calloc(map->height, sizeof(long long int));
+				}
+
+				for (int i = 0; i < map->numLayers; i++) {
+								if (!colMap) {
+
+								}
+				}
+
+
+				for (int i = 0; i < map->height; i++) {
+								free(colMap[i]);
+				}
+				free(colMap);
 }
 
 int isWalkable(MAP* map,SDL_Rect playerPoz) {

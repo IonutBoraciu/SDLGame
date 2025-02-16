@@ -27,6 +27,7 @@ typedef struct items {
     int state;
     char type;
     char text_location[250];
+    void (*f)(int,...);
 } ITEMS;
 
 typedef struct mySound {
@@ -75,7 +76,7 @@ typedef struct player {
     SDL_Rect playerPoz;
     SDL_Rect sourceSize;
     aTime time;
-    int thread;
+    int speed;
 } PLAYER;
 
 typedef struct obj {

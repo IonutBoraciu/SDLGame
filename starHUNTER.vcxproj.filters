@@ -18,66 +18,66 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="common.c">
+    <ClCompile Include="src\animation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mainMenu.c">
+    <ClCompile Include="src\common.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inventory.c">
+    <ClCompile Include="src\cJSON.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gameMechanics.c">
+    <ClCompile Include="src\map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="life.c">
+    <ClCompile Include="src\enemy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="printText.c">
+    <ClCompile Include="src\life.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="animation.c">
+    <ClCompile Include="src\printText.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="enemy.c">
+    <ClCompile Include="src\mainMenu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cJSON.c">
+    <ClCompile Include="src\gameMechanics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="map.c">
+    <ClCompile Include="src\inventory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="common.h">
+    <ClInclude Include="src\animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mainMenu.h">
+    <ClInclude Include="src\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inventory.h">
+    <ClInclude Include="src\cJSON.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gameMechanics.h">
+    <ClInclude Include="src\map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="life.h">
+    <ClInclude Include="src\enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="printText.h">
+    <ClInclude Include="src\life.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="animation.h">
+    <ClInclude Include="src\printText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="enemy.h">
+    <ClInclude Include="src\mainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cJSON.h">
+    <ClInclude Include="src\gameMechanics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
+    <ClInclude Include="src\inventory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
