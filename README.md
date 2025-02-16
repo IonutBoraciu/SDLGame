@@ -17,13 +17,18 @@ StarHunter isn't just another game—it’s crafted at a low level using C and t
 
 The inventory system can hold up to 24 items in total. Of these, up to 11 items can be placed in the hotbar, while the player can equip one main weapon. Items can be freely moved within the inventory using a drag-and-drop interface, and some items can be activated directly from the hotbar for quick use.
 
+![Inventory GIF](demo/inventory.gif)
 ### Dialogue Box
 
 A dynamic text box displays dialogue to the player, accompanied by the face of the character speaking, adding a visual touch to the conversation.
 
+![TextBox GIF](demo/textBox.gif)
+
 ### Map
 
 The game world is built using a 2D map created with Tiled, offering flexibility and depth. The map is exported in a .json file format, which is loaded directly into the game for easy modification and updates.
+
+![Map GIF](demo/max.gif)
 
 ### Sound
 
@@ -32,6 +37,8 @@ Sound plays a crucial role in the game's immersive experience. The background mu
 ### Main menu
 
 The main menu, created from scratch in SDL, is the heart of the player’s settings and interactions. It features custom code for sound settings, resolution adjustments, and a smooth user interface with animations to make it more alive
+
+![Menu GIF](demo/menu.gif)
 
 
 </div>
