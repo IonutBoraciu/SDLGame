@@ -28,7 +28,7 @@ A dynamic text box displays dialogue to the player, accompanied by the face of t
 
 The game world is built using a 2D map created with Tiled, offering flexibility and depth. The map is exported in a .json file format, which is loaded directly into the game for easy modification and updates.
 
-![Map GIF](demo/max.gif)
+![Map GIF](demo/map.gif)
 
 ### Sound
 
@@ -39,6 +39,11 @@ Sound plays a crucial role in the game's immersive experience. The background mu
 The main menu, created from scratch in SDL, is the heart of the player’s settings and interactions. It features custom code for sound settings, resolution adjustments, and a smooth user interface with animations to make it more alive
 
 ![Menu GIF](demo/menu.gif)
+
+### How to install :
+
+If you just want to play the game switch to the branch "playGame" and just execute the starHunter.exe.
+If you want to compile it, you should use the following libraries: SDL, SDL_mixer, SDL_image, glib
 
 
 </div>
