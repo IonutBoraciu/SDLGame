@@ -40,6 +40,11 @@ The main menu, created from scratch in SDL, is the heart of the player’s setti
 
 ![Menu GIF](demo/menu.gif)
 
+### How to install :
+
+If you just want to play the game switch to the branch "playGame" and just execute the starHunter.exe.
+If you want to compile it, you should use the following libraries: SDL, SDL_mixer, SDL_image, glib
+
 
 </div>
 
